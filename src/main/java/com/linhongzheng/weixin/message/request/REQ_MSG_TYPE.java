@@ -3,7 +3,7 @@ package com.linhongzheng.weixin.message.request;
 public enum REQ_MSG_TYPE {
 
 	TEXT("text"), IMAGE("image"), VOICE("voice"), VIDEO("video"), SHORTVIDEO(
-			"shortvideo"), LOCATION("location"), LINK("link");
+			"shortvideo"), LOCATION("location"), LINK("link"), EVENT("event");
 
 	private String desc;
 
@@ -17,5 +17,5 @@ public enum REQ_MSG_TYPE {
 	public String getDesc() {
 		return desc;
 	}
-	
+
 }
