@@ -2,7 +2,7 @@ package com.linhongzheng.weixin.entity.message.request;
 
 import com.linhongzheng.weixin.entity.message.BaseMessage;
 
-public class BaseRequestMessage extends BaseMessage {
+public abstract class BaseRequestMessage extends BaseMessage {
 	private String MsgId; // 消息id，用于排重
 	private String MsgType; // 消息类型(text/image/voice/video/shortvideo/location/link)
 

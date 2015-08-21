@@ -27,7 +27,7 @@ public class User {
      * @throws NoSuchAlgorithmException
      * @throws KeyManagementException
      */
-    public UserInfo getUserInfo(String accessToken, String openid) throws Exception {
+   /* public UserInfo getUserInfo(String accessToken, String openid) throws Exception {
         Map<String, String> params = new HashMap<String, String>();
         params.put("access_token", accessToken);
         params.put("openid", openid);
@@ -41,7 +41,7 @@ public class User {
             return user;
         }
         return null;
-    }
+    }*/
 
     /**
      * 获取帐号的关注者列表
@@ -49,7 +49,7 @@ public class User {
      * @param next_openid
      * @return
      */
-    public JSONObject getFollwersList(String accessToken, String next_openid) throws Exception{
+  /*  public JSONObject getFollwersList(String accessToken, String next_openid) throws Exception{
         Map<String, String> params = new HashMap<String, String>();
         params.put("access_token", accessToken);
         params.put("next_openid", next_openid);
@@ -62,5 +62,5 @@ public class User {
             return obj;
         }
         return null;
-    }
+    }*/
 }

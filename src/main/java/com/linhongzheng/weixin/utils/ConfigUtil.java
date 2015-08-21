@@ -17,17 +17,36 @@ import org.apache.commons.lang.math.NumberUtils;
  * Created by linhz on 2015/8/17.
  */
 public class ConfigUtil {
-    private Map<String, Properties> configProp = new HashMap<String, Properties>();
+
+
+    public  static Map<String, String> PropMap = new HashMap<String, String>();
+
+    private static final String DEFAULT_CFG_FILE = "wechat.properties";
 
     /**
      * 配置文件名
      */
     private String cfgFile;
 
+    static {
+
+        init();
+
+
+    }
+
     /**
      * 前缀
      */
     private String pref;
+
+    public ConfigUtil() {
+        this(null);
+    }
+
+    public ConfigUtil(String pref) {
+        this(DEFAULT_CFG_FILE, pref);
+    }
 
     public ConfigUtil(String cfgFile, String pref) {
         this.cfgFile = cfgFile;
@@ -38,9 +57,9 @@ public class ConfigUtil {
     /**
      * 用配置文件初始化参数。
      */
-    private void init() {
+    private static void init() {
         InputStream in = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream(this.cfgFile);
+                .getResourceAsStream(DEFAULT_CFG_FILE);
         try {
             Properties cfgs = new Properties();
             cfgs.load(in);
@@ -51,38 +70,18 @@ public class ConfigUtil {
             String groupName = null;
             String propKey = null;
             StringTokenizer st = null;
-            int length = pref.length();
-            for (Iterator<?> it = cfgs.entrySet().iterator(); it.hasNext();) {
-                Entry<?, ?> e = (Entry<?, ?>) it.next();
-                cKey = (String) e.getKey();
-                cValue = (String) e.getValue();
-                if (!cKey.startsWith(pref)) {
-                    continue;
-                }
-
-                // 获取参数名
-                cKey = cKey.substring(length);
-                st = new StringTokenizer(cKey, ".");
-                if (st.hasMoreTokens()) {
-                    groupName = st.nextToken();
-                }
-                if (st.hasMoreTokens()) {
-                    propKey = st.nextToken();
-                }
-
-                if (propKey != null) {
-                    Properties conf;
-                    if (configProp.containsKey(groupName)) {
-                        conf = (Properties) configProp.get(groupName);
-                    } else {
-                        conf = new Properties();
-                        configProp.put(groupName, conf);
+            if (StringUtils.isEmpty(propKey)) {
+                for (Iterator<?> it = cfgs.entrySet().iterator(); it.hasNext(); ) {
+                    Entry<?, ?> e = (Entry<?, ?>) it.next();
+                    cKey = (String) e.getKey();
+                    cValue = (String) e.getValue();
+                    if (!PropMap.containsKey(cKey)) {
+                        PropMap.put(cKey, cValue);
                     }
-                    conf.put(propKey, cValue);
                 }
             }
         } catch (IOException e) {
-        e.printStackTrace();
+            e.printStackTrace();
         } finally {
             IOUtils.closeQuietly(in);
         }
@@ -91,87 +90,17 @@ public class ConfigUtil {
     /**
      * 取配置参数的值
      *
-     * @param groupName
-     *            分组项
      * @param key
      * @return 参数值(string)
      */
-    public String getValue(String groupName, String key) {
-        Properties conf = configProp.get(groupName);
-        if (conf != null) {
-            return conf.getProperty(key);
+    public String getValue(String key) {
+        String value = PropMap.get(key);
+        if (value == null) {
+            init();
+            value = PropMap.get(key);
         }
-        return null;
+        return value;
     }
 
-    /**
-     * 取配置参数的值(int)
-     *
-     * @param groupName
-     *            分组项
-     * @param key
-     *            键值
-     * @return 参数值(int)
-     */
-    public int getIntValue(String groupName, String key) {
-        return NumberUtils.toInt(getValue(groupName, key));
-    }
-
-    /**
-     * 取配置参数的值(long)
-     *
-     * @param groupName
-     *            分组项
-     * @param key
-     *            键值
-     * @return 参数值(long)
-     */
-    public long getLongValue(String groupName, String key) {
-        return NumberUtils.toLong(getValue(groupName, key));
-    }
-
-    /**
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (Iterator<?> it = configProp.entrySet().iterator(); it.hasNext();) {
-            Entry<?, ?> entry = (Entry<?, ?>) it.next();
-            Properties conf = (Properties) entry.getValue();
-
-            String prefStr = pref + entry.getKey();
-            for (Iterator<?> confIt = conf.entrySet().iterator(); confIt
-                    .hasNext();) {
-                Entry<?, ?> confEntry = (Entry<?, ?>) confIt.next();
-                sb.append(prefStr).append(".").append(confEntry.getKey())
-                        .append("=").append(confEntry.getValue())
-                        .append("\r\n");
-            }
-            sb.append("\r\n");
-        }
-        return sb.toString();
-    }
-
-    /**
-     * 获取分组项的配置属性
-     *
-     * @param groupName
-     *            分组项
-     * @return 配置属性(Properties)
-     */
-    public Properties getProperties(String groupName) {
-        return configProp.get(groupName);
-    }
-
-    /**
-     * 获取所有分组项
-     *
-     * @return 所有分组项名
-     */
-    public Set<String> getAllGroupNames() {
-        return configProp.keySet();
-    }
 
 }

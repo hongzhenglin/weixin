@@ -1,11 +1,10 @@
 package com.linhongzheng.weixin.utils;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
@@ -16,7 +15,10 @@ import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+
 public class Dom4jUtil {
+
+
     public static List getChilds(Node srcNode) {
         List childNodes = null;
         if (srcNode instanceof Document) {
@@ -101,7 +103,6 @@ public class Dom4jUtil {
     }
 
     /**
-     *
      * @param fileName
      * @return Dom4j的Document
      * @throws DocumentException
@@ -145,7 +146,6 @@ public class Dom4jUtil {
     }
 
     /**
-     *
      * @param xml
      * @return
      * @throws Exception
@@ -162,7 +162,6 @@ public class Dom4jUtil {
     }
 
     /**
-     *
      * @param doc
      * @param path
      * @return
@@ -174,7 +173,6 @@ public class Dom4jUtil {
     }
 
     /**
-     *
      * @param doc
      * @param path
      * @return
@@ -205,7 +203,6 @@ public class Dom4jUtil {
     }
 
     /**
-     *
      * @param doc
      * @param path
      * @return
@@ -216,7 +213,6 @@ public class Dom4jUtil {
     }
 
     /**
-     *
      * @param doc
      * @param path
      * @return
@@ -237,7 +233,6 @@ public class Dom4jUtil {
     }
 
     /**
-     *
      * @param node
      * @param attributeName
      * @return

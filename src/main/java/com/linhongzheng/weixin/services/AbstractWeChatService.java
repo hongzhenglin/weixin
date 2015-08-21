@@ -3,6 +3,7 @@ package com.linhongzheng.weixin.services;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.utils.HttpUtil;
+import com.linhongzheng.weixin.utils.SignUtil;
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -15,9 +16,7 @@ import java.lang.reflect.Method;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,7 +43,7 @@ public abstract  class AbstractWeChatService {
      * @return
      * @throws Exception
      */
-    public static boolean payfeedback(String openid, String feedbackid) throws Exception {
+/*    public static boolean payfeedback(String openid, String feedbackid) throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         String accessToken = getAccessToken();
         map.put("access_token", accessToken);
@@ -53,19 +52,18 @@ public abstract  class AbstractWeChatService {
         String jsonStr = HttpKit.get(PAYFEEDBACK_URL, map);
         Map<String, Object> jsonMap = JSONObject.parseObject(jsonStr);
         return "0".equals(jsonMap.get("errcode").toString());
-    }
+    }*/
 
     /**
      * 签名检查
      *
-     * @param token
      * @param signature
      * @param timestamp
      * @param nonce
      * @return
      */
     public static Boolean checkSignature(String token, String signature, String timestamp, String nonce) {
-        return SignUtil.checkSignature(token, signature, timestamp, nonce);
+        return SignUtil.checkSignature( signature, timestamp, nonce);
     }
 
     /**
@@ -74,7 +72,7 @@ public abstract  class AbstractWeChatService {
      * @param responseInputString 微信发送过来的xml消息体
      * @return
      */
-    public static String processing(String responseInputString) {
+  /*  public static String processing(String responseInputString) {
         InMessage inMessage = parsingInMessage(responseInputString);
         OutMessage oms = null;
         // 加载处理器
@@ -131,7 +129,7 @@ public abstract  class AbstractWeChatService {
         }
         return xml;
     }
-
+*/
     /**
      * 设置发送消息体
      *
@@ -139,7 +137,7 @@ public abstract  class AbstractWeChatService {
      * @param msg
      * @throws Exception
      */
-    private static void setMsgInfo(OutMessage oms, InMessage msg) throws Exception {
+    /*private static void setMsgInfo(OutMessage oms, InMessage msg) throws Exception {
         if (oms != null) {
             Class<?> outMsg = oms.getClass().getSuperclass();
             Field CreateTime = outMsg.getDeclaredField("CreateTime");
@@ -154,7 +152,7 @@ public abstract  class AbstractWeChatService {
             ToUserName.set(oms, msg.getFromUserName());
             FromUserName.set(oms, msg.getToUserName());
         }
-    }
+    }*/
 
     /**
      * 消息体转换
@@ -162,14 +160,14 @@ public abstract  class AbstractWeChatService {
      * @param responseInputString
      * @return
      */
-    private static InMessage parsingInMessage(String responseInputString) {
+  /*  private static InMessage parsingInMessage(String responseInputString) {
         //转换微信post过来的xml内容
         XStream xs = XStreamFactory.init(false);
         xs.ignoreUnknownElements();
         xs.alias("xml", InMessage.class);
         InMessage msg = (InMessage) xs.fromXML(responseInputString);
         return msg;
-    }
+    }*/
 
     /**
      * 获取媒体资源
@@ -181,11 +179,11 @@ public abstract  class AbstractWeChatService {
      * @throws InterruptedException
      * @throws java.util.concurrent.ExecutionException
      */
-    public static Attachment getMedia(String accessToken, String mediaId) throws IOException, ExecutionException, InterruptedException {
+ /*   public static Attachment getMedia(String accessToken, String mediaId) throws IOException, ExecutionException, InterruptedException {
         String url = GET_MEDIA_URL + accessToken + "&media_id=" + mediaId;
         return HttpKit.download(url);
     }
-
+*/
     /**
      * 上传素材文件
      *
@@ -201,7 +199,9 @@ public abstract  class AbstractWeChatService {
      */
     public static Map<String, Object> uploadMedia(String accessToken, String type, File file) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, IOException, ExecutionException, InterruptedException {
         String url = UPLOAD_MEDIA_URL + accessToken + "&type=" + type;
-        String jsonStr = HttpKit.upload(url, file);
+        List<File> fileList= new ArrayList<File>();
+        fileList.add(file);
+        String jsonStr = HttpUtil.upload(url, fileList,null);
         return JSON.parseObject(jsonStr, Map.class);
     }
 
@@ -229,9 +229,9 @@ public abstract  class AbstractWeChatService {
      * @param url
      * @return
      */
-    public static Map<String, String> jsApiSign(String jsapiTicket, String url) {
+  /*  public static Map<String, String> jsApiSign(String jsapiTicket, String url) {
         return JsApiSign.sign(jsapiTicket, url);
-    }
+    }*/
 
     /**
      * 判断是否来自微信, 5.0 之后的支持微信支付
