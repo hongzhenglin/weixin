@@ -8,7 +8,7 @@ public class Music {
 	private String Description;
 	
 	// 否音乐链接
-	private String MusicURL; 
+	private String MusicUrl; 
 	
 	// 否高质量音乐链接，WIFI环境优先使用该链接播放音乐
 	private String HQMusicUrl; 
@@ -33,12 +33,12 @@ public class Music {
 		Description = description;
 	}
 
-	public String getMusicURL() {
-		return MusicURL;
+	public String getMusicUrl() {
+		return MusicUrl;
 	}
 
-	public void setMusicURL(String musicURL) {
-		MusicURL = musicURL;
+	public void setMusicUrl(String MusicUrl) {
+		this.MusicUrl = MusicUrl;
 	}
 
 	public String getHQMusicUrl() {
