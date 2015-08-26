@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class DateUtil {
-	public static final String pattern19ToDate = "yyyy-MM-dd HH24:mi:ss";
+	public static final String pattern19ToDate = "yyyy-MM-dd HH24:mm:ss";
 	
 	public static String getMondayOfWeek() {
 		DateFormat df = new SimpleDateFormat(pattern19ToDate);

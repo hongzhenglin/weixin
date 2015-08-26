@@ -19,7 +19,7 @@ public class WeChatServiceTestImpl extends TestCase {
 		Map<String, String> requestMap = new HashMap<String, String>();
 		requestMap.put("FromUserName", "philiphongzheng");
 		requestMap.put("ToUserName", "philipLin");
-		requestMap.put("Content", "歌曲");
+		requestMap.put("Content", "签到");
 		System.out.println(messageService.handleTextMessage(requestMap));
 	}
 

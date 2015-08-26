@@ -44,15 +44,15 @@ public class BaseDAO<T> {
 		return conn;
 	}
 
-	public Integer queryByCount(String sql, Object... params) {
-		ResultSetHandler<Integer> rsh = new ScalarHandler<Integer>();
+	public Long queryByCount(String sql, Object... params) {
+		ResultSetHandler<Long> rsh = new ScalarHandler<Long>();
 
 		Connection conn = createConnection();
 		QueryRunner qr = new QueryRunner();
 
-		int count = 0;
+		long count = 0;
 		try {
-			count = (Integer) qr.query(conn, sql, rsh, params);
+			count =  qr.query(conn, sql, rsh, params);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {

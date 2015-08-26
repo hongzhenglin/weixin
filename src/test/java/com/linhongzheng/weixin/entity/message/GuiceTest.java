@@ -16,7 +16,7 @@ import com.linhongzheng.weixin.guice.modules.MyTestModule;
 public class GuiceTest extends TestCase {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(GuiceTest.class);
-
+ 
 	@Test
 	public void testGuice() {
 		MyTestModule module = new MyTestModule();// 定义注射规则

@@ -38,11 +38,11 @@ public class UserServiceImpl implements IUserService {
 	public boolean isTodaySign(String openId) {
 
 		String updateSql = "SELECT COUNT(*) FROM weixin_sign WHERE  open_id = ? AND "
-				+ " date_format(sign_time '%Y-%m-%d') = date_format(now(),' %Y-%m-%d ')";
+				+ " DATEDIFF(date_format(sign_time ,'%Y-%m-%d') , date_format(now(),' %Y-%m-%d'))=0";
 
 		boolean flag = false;
 
-		int count = new BaseDAO<Integer>().queryByCount(updateSql, openId);
+		long count = new BaseDAO<Integer>().queryByCount(updateSql, openId);
 		if (count == 1) {
 			flag = true;
 		} else {
@@ -57,11 +57,11 @@ public class UserServiceImpl implements IUserService {
 	public boolean isWeekySign(String openId, String monday) {
 
 		String updateSql = "select count(*)  from weixin_sign where  open_id = ? AND"
-				+ "   sign_time between date_format(? '%Y-%m-%d') and now()";
+				+ "   sign_time between date_format(?, '%Y-%m-%d') and now()";
 
 		boolean flag = false;
 
-		int count = new BaseDAO<Integer>().queryByCount(updateSql, openId,
+		long count = new BaseDAO<Integer>().queryByCount(updateSql, openId,
 				monday);
 
 		if (count == 1) {
