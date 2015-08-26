@@ -4,7 +4,6 @@ import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.dbutils.DbUtils;
@@ -13,17 +12,25 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
+import com.linhongzheng.weixin.utils.ConfigUtil;
+
 public class BaseDAO<T> {
-	private static String dirverClassName = "com.mysql.jdbc.Driver";
-	private static String url = "jdbc:mysql://w.rdc.sae.sina.com.cn:3307/app_linhzweixintest?useUnicode=true&characterEncoding=utf8";
-	private static String user = "m1mznjw3yj";
-	private static String password = "ix2mi01ii5kxjxy5ykillxmmijxy0xiiyh2xyymi";
+
+	private static final String JDBC_CONFIG_FILE = "jdbc.properties";
 	private Class clazz;
+	private String url;
+	private String user;
+	private String password;
+	private ConfigUtil configUtil;
 
 	public BaseDAO() {
+
+		configUtil = new ConfigUtil(JDBC_CONFIG_FILE);
+		url = configUtil.getValue("jdbc.url");
+		user = configUtil.getValue("jdbc.username");
+		password = configUtil.getValue("jdbc.password");
+		String dirverClassName = configUtil.getValue("jdbc.driverClassName");
 		DbUtils.loadDriver(dirverClassName);
-		clazz = (Class) ((ParameterizedType) this.getClass()
-				.getGenericSuperclass()).getActualTypeArguments()[0];
 	}
 
 	public Connection createConnection() {
@@ -56,6 +63,8 @@ public class BaseDAO<T> {
 	}
 
 	public List<T> query(String sql, Object... params) {
+		clazz = (Class) ((ParameterizedType) this.getClass()
+				.getGenericSuperclass()).getActualTypeArguments()[0];
 		Connection conn = createConnection();
 		QueryRunner qr = new QueryRunner();
 		BeanListHandler blh = new BeanListHandler(clazz);

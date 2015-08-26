@@ -36,8 +36,9 @@ public abstract class AbstractWeChatService {
 	protected String appSecret = null;
 
 	public AbstractWeChatService() {
-		appId = ConfigUtil.PropMap.get("AppId");
-		appSecret = ConfigUtil.PropMap.get("AppSecret");
+		ConfigUtil configUtil = new ConfigUtil();
+		appId = configUtil.getValue("AppId");
+		appSecret = configUtil.getValue("AppSecret");
 	}
 
 	/**

@@ -27,7 +27,6 @@ import com.qq.weixin.mp.aes.WXBizMsgCrypt;
 /**
  * Created by linhz on 2015/8/17.
  */
-@RequestScoped
 public class WeChatServiceImpl extends AbstractWeChatService implements
 		IWeChatService {
 
