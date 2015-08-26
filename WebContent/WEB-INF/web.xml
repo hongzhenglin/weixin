@@ -5,10 +5,8 @@
 	id="WebApp_ID" version="2.5">
 	<display-name>weixin Web</display-name>
 
-	<!-- <listener>
-		<listener-class>com.linhongzheng.weixin.guice.listener.MyGuiceServletContextListener</listener-class>
-	</listener>
-	 -->
+	<!-- <listener> <listener-class>com.linhongzheng.weixin.guice.listener.MyGuiceServletContextListener</listener-class> 
+		</listener> -->
 	<!-- Processes application requests -->
 	<servlet>
 		<servlet-name>coreServlet</servlet-name>
@@ -19,7 +17,7 @@
 		<servlet-name>coreServlet</servlet-name>
 		<url-pattern>/coreServlet</url-pattern>
 	</servlet-mapping>
-<!-- 
+
 	<filter>
 		<filter-name>guiceFilter</filter-name>
 		<filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
@@ -27,8 +25,7 @@
 	<filter-mapping>
 		<filter-name>guiceFilter</filter-name>
 		<url-pattern>/coreServlet/*</url-pattern>
-	</filter-mapping> -->
-
+	</filter-mapping>
 	<!-- Disables Servlet Container welcome file handling. Needed for compatibility 
 		with Servlet 3.0 and Tomcat 7.0 -->
 	<welcome-file-list>

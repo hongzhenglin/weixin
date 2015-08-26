@@ -28,17 +28,11 @@ import com.linhongzheng.weixin.entity.message.response.VedioResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.VoiceResponseMessage;
 import com.linhongzheng.weixin.utils.HttpUtil;
 import com.linhongzheng.weixin.utils.StringUtils;
+import com.linhongzheng.weixin.utils.URLConstants;
 import com.linhongzheng.weixin.utils.XStreamUtil;
 import com.thoughtworks.xstream.XStream;
 
 public class MessageUtil {
-
-	private static final String MESSAGE_URL = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=";
-	private static final String UPLOADNEWS_URL = "https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=";
-	private static final String MASS_SENDALL_URL = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=";
-	private static final String MASS_SEND_URL = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=";
-	private static final String MASS_DELETE_URL = "https://api.weixin.qq.com//cgi-bin/message/mass/delete?access_token=";
-	private static final String TEMPLATE_SEND_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=";
 
 	public static Map<String, String> parseXml(HttpServletRequest request)
 			throws IOException {
@@ -46,6 +40,9 @@ public class MessageUtil {
 		return parseInXml(request.getInputStream());
 
 	}
+
+	
+	
 
 	public static Map parseInXml(InputStream in) {
 		Map<String, String> map = new HashMap<String, String>();
@@ -64,7 +61,7 @@ public class MessageUtil {
 	 * @param map
 	 * @param root
 	 */
-	private static void recursiveParseXml(Map<String, String> map, Element root) {
+	public static void recursiveParseXml(Map<String, String> map, Element root) {
 		List<Element> elementList = root.elements();
 		if (elementList.size() == 0) {
 			map.put(root.getName(), root.getTextTrim());
@@ -132,7 +129,8 @@ public class MessageUtil {
 	 */
 	private String sendMsg(String accessToken, Map<String, String> message)
 			throws Exception {
-		String result = HttpUtil.post(MESSAGE_URL.concat(accessToken), message);
+		String result = HttpUtil.post(
+				URLConstants.MESSAGE_URL.concat(accessToken), message);
 		return result;
 	}
 
@@ -346,8 +344,8 @@ public class MessageUtil {
 			throws IOException, ExecutionException, InterruptedException {
 		Map<String, String> json = new HashMap<String, String>();
 		json.put("msgid", msgid);
-		String result = HttpUtil
-				.post(MASS_DELETE_URL.concat(accessToken), json);
+		String result = HttpUtil.post(
+				URLConstants.MASS_DELETE_URL.concat(accessToken), json);
 		if (StringUtils.isNotEmpty(result)) {
 			return JSONObject.parseObject(result);
 		}

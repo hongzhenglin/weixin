@@ -11,6 +11,12 @@ import com.linhongzheng.weixin.services.impl.WeChatServiceImpl;
 
 @ImplementedBy(WeChatServiceImpl.class)
 public interface IWeChatService {
-    public abstract   String processRequest(HttpServletRequest request);
+	public abstract String processRequestRaw(HttpServletRequest request)
+			throws Exception;
+
+	public abstract String processRequestCrypt(HttpServletRequest request)
+			throws Exception;
+
+	
 
 }

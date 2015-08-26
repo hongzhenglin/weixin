@@ -11,8 +11,26 @@ import java.util.Arrays;
  * @date 2015-08-15
  */
 public class SignUtil {
+
 	// 与开发模式接口配置信息中的Token保持一致
-	private static final String token = "weixintest";
+	public static final String Token = "weixintest";
+	public static final String EncodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+
+	/**
+	 * msg_signature=sha1(sort(Token、timestamp、nonce, msg_encrypt))
+	 * 
+	 * @return
+	 */
+	public static boolean checkCryptSignature(String msgSignature,
+			String timestamp, String nonce, String msgEncrypt) {
+		// 将token、timestamp、nonce、msg_encrypt四个参数进行字典序排序
+		String[] paramArr = new String[] { Token, timestamp, nonce, msgEncrypt };
+		Arrays.sort(paramArr);
+		// 将四个参数字符串拼接成一个字符串进行sha1加密
+		String content = paramArr[0].concat(paramArr[1].concat(paramArr[2]
+				.concat(paramArr[3])));
+		return shaDigest(msgSignature, content);
+	}
 
 	/**
 	 * 
@@ -27,12 +45,16 @@ public class SignUtil {
 	public static boolean checkSignature(String signature, String timestamp,
 			String nonce) {
 		// 将token、timestamp、nonce三个参数进行字典序排序
-		String[] paramArr = new String[] { token, timestamp, nonce };
+		String[] paramArr = new String[] { Token, timestamp, nonce };
 		Arrays.sort(paramArr);
 
 		// 将三个参数字符串拼接成一个字符串进行sha1加密
 		String content = paramArr[0].concat(paramArr[1].concat(paramArr[2]));
 
+		return shaDigest(signature, content);
+	}
+
+	private static boolean shaDigest(String signature, String content) {
 		String ciphertext = null;
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-1");

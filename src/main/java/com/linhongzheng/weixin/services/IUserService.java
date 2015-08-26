@@ -1,5 +1,9 @@
 package com.linhongzheng.weixin.services;
 
+import com.google.inject.ImplementedBy;
+import com.linhongzheng.weixin.services.impl.UserServiceImpl;
+
+@ImplementedBy(UserServiceImpl.class)
 public interface IUserService {
 	public abstract void saveWeiXinUser(String openId);
 

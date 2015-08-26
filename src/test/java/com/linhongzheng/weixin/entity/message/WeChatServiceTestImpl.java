@@ -22,10 +22,19 @@ public class WeChatServiceTestImpl implements IWeChatService {
 	}
 
 	@Override
-	public String processRequest(HttpServletRequest request) {
+	public String processRequestRaw(HttpServletRequest request) {
 
 		return null;
 
 	}
+
+	@Override
+	public String processRequestCrypt(HttpServletRequest request)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+ 
 
 }

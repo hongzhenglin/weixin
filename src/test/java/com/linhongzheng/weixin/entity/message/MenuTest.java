@@ -9,7 +9,7 @@ import com.linhongzheng.weixin.services.impl.MenuServiceImpl;
 public class MenuTest extends TestCase {
 	@Test
 	public void testCreateMenu() {
-		MenuServiceImpl.creatMenu();
+		new MenuServiceImpl().creatMenu();
 		// {"errcode":48001,"errmsg":"api unauthorized"}
 	}
 

@@ -3,28 +3,43 @@ package com.linhongzheng.weixin.services.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
 import com.linhongzheng.weixin.entity.menu.Button;
 import com.linhongzheng.weixin.entity.menu.ClickButton;
 import com.linhongzheng.weixin.entity.menu.ComplexButton;
 import com.linhongzheng.weixin.entity.menu.Menu;
 import com.linhongzheng.weixin.entity.menu.ViewButton;
+import com.linhongzheng.weixin.services.AbstractWeChatService;
+import com.linhongzheng.weixin.services.IAccessTokenService;
+import com.linhongzheng.weixin.services.IMenuService;
 import com.linhongzheng.weixin.utils.HttpUtil;
 import com.linhongzheng.weixin.utils.JSONUtils;
+import com.linhongzheng.weixin.utils.URLConstants;
 
 /**
  * Created by linhz on 2015/8/17.
  */
-public class MenuServiceImpl {
+public class MenuServiceImpl extends AbstractWeChatService implements
+		IMenuService {
 	private static Logger log = LoggerFactory.getLogger(MenuServiceImpl.class);
-	private static String MENU_CREATE_URL = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
 
-	public static void creatMenu() {
+	@Inject
+	IAccessTokenService accessTokenService;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.linhongzheng.weixin.services.impl.IMenuService#creatMenu()
+	 */
+	@Override
+	public void creatMenu() {
 
 		String at;
 		try {
-			at = AccessTokenService.getAccessToken();
+			at = accessTokenService.getAccessToken();
 			if (null != at) {
-				String requestUrl = MENU_CREATE_URL.replace("ACCESS_TOKEN", at);
+				String requestUrl = URLConstants.MENU_CREATE_URL.replace(
+						"ACCESS_TOKEN", at);
 				String jsonMenu = JSONUtils.objectToJson(getMenu(), "0");
 				String jsonStr = HttpUtil.post(requestUrl, jsonMenu);
 
@@ -37,7 +52,7 @@ public class MenuServiceImpl {
 
 	}
 
-	private static Menu getMenu() {
+	private Menu getMenu() {
 
 		ClickButton btn1 = new ClickButton();
 		btn1.setName("今日歌曲");

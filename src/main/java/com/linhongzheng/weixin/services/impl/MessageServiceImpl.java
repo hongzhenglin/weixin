@@ -1,13 +1,10 @@
 package com.linhongzheng.weixin.services.impl;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +15,8 @@ import com.linhongzheng.weixin.entity.message.MSG_TYPE;
 import com.linhongzheng.weixin.entity.message.event.EVENT_TYPE;
 import com.linhongzheng.weixin.entity.message.response.Article;
 import com.linhongzheng.weixin.entity.message.response.ImageResponseMessage;
+import com.linhongzheng.weixin.entity.message.response.Music;
+import com.linhongzheng.weixin.entity.message.response.MusicResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.VoiceResponseMessage;
@@ -48,6 +47,12 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 	 */
 	@Override
 	public String handleTextMessage(Map<String, String> requestMap) {
+
+		// 返回给微信服务器的xml消息
+		String respXml = null;
+		// 文本消息内容
+		String respContent = null;
+
 		// 发送方帐号（open_id）
 		String fromUserName = requestMap.get("FromUserName");
 		// 公众帐号
@@ -55,7 +60,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		TextResponseMessage textResponseMessage = createTextMessage(
 				fromUserName, toUserName);
 		// 接收用户发送的文本消息内容
-		String content = requestMap.get("Content");
+		String content = requestMap.get("Content").trim();
 		// TODO 可以根据数据库的配置做非全文匹配
 
 		saveTextMessage(requestMap);
@@ -76,8 +81,63 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 				}
 
 			}
+			respXml = MessageUtil.messageToXml(textResponseMessage);
+		} else {
+			// 如果以“歌曲”2个字开头
+			if (content.startsWith("歌曲")) {
+				// 将歌曲2个字及歌曲后面的+、空格、-等特殊符号去掉
+				String keyWord = content.replaceAll("^歌曲[\\+ ~!@#%^-_=]?", "");
+				// 如果歌曲名称为空
+				if ("".equals(keyWord)) {
+					respContent = BaiduMusicServiceImpl.getUsage();
+				} else {
+					String[] kwArr = keyWord.split("@");
+					// 歌曲名称
+					String musicTitle = kwArr[0];
+					// 演唱者默认为空
+					String musicAuthor = "";
+					if (2 == kwArr.length)
+						musicAuthor = kwArr[1];
+
+					// 搜索音乐
+					Music music = new BaiduMusicServiceImpl().searchMusic(musicTitle,
+							musicAuthor);
+					// 未搜索到音乐
+					if (null == music) {
+						respContent = "对不起，没有找到你想听的歌曲<" + musicTitle + ">。";
+					} else {
+						MusicResponseMessage musicMessage = handleMusicMessage(
+								requestMap, music);
+						respXml = MessageUtil.messageToXml(musicMessage);
+					}
+				}
+				// 未搜索到音乐时返回使用指南
+				if (null == respXml) {
+					if (null == respContent)
+						respContent = BaiduMusicServiceImpl.getUsage();
+					textResponseMessage.setContent(respContent);
+					respXml = MessageUtil.messageToXml(textResponseMessage);
+				}
+			}
 		}
-		return MessageUtil.messageToXml(textResponseMessage);
+
+		return respXml;
+	}
+
+	private MusicResponseMessage handleMusicMessage(
+			Map<String, String> requestMap, Music music) {
+		// 发送方帐号（open_id）
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+		// 音乐消息
+		MusicResponseMessage musicMessage = new MusicResponseMessage();
+		musicMessage.setToUserName(fromUserName);
+		musicMessage.setFromUserName(toUserName);
+		musicMessage.setCreateTime(new Date().getTime());
+		musicMessage.setMsgType(MSG_TYPE.MUSIC.toString());
+		musicMessage.setMusic(music);
+		return musicMessage;
 	}
 
 	private void saveTextMessage(Map<String, String> requestMap) {
