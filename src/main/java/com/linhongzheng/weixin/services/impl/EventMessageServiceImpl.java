@@ -1,20 +1,23 @@
 package com.linhongzheng.weixin.services.impl;
 
-import com.google.inject.Inject;
-import com.linhongzheng.weixin.entity.message.request.TextRequestMessage;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
+import com.linhongzheng.weixin.services.AbstractWeChatService;
 import com.linhongzheng.weixin.services.IEventMessageService;
 import com.linhongzheng.weixin.services.IUserService;
 import com.linhongzheng.weixin.utils.message.MessageUtil;
 
-import java.util.Map;
-
 /**
  * Created by linhz on 2015/8/18.
  */
-public class EventMessageServiceImpl implements IEventMessageService {
-
-	@Inject
+@Service("eventMessageService")
+public class EventMessageServiceImpl extends AbstractWeChatService implements
+		IEventMessageService {
+	@Autowired
 	IUserService userService;
 
 	@Override
@@ -36,4 +39,13 @@ public class EventMessageServiceImpl implements IEventMessageService {
 	public String handleClientEvent(Map<String, String> requestMap) {
 		return null;
 	}
+
+	public IUserService getUserService() {
+		return userService;
+	}
+
+	public void setUserService(IUserService userService) {
+		this.userService = userService;
+	}
+
 }

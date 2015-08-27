@@ -9,12 +9,14 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.springframework.stereotype.Service;
 
 import com.linhongzheng.weixin.entity.message.response.Music;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
 import com.linhongzheng.weixin.services.IBaiduMusicService;
 import com.linhongzheng.weixin.utils.URLConstants;
 
+@Service("baiduMusicService")
 public class BaiduMusicServiceImpl extends AbstractWeChatService implements
 		IBaiduMusicService {
 

@@ -4,9 +4,18 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 	<display-name>weixin Web</display-name>
-
-	<!-- <listener> <listener-class>com.linhongzheng.weixin.guice.listener.MyGuiceServletContextListener</listener-class> 
-		</listener> -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+        classpath*:applicationContext.xml
+		</param-value>
+	</context-param>
+	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	 
+ 
 	<!-- Processes application requests -->
 	<servlet>
 		<servlet-name>coreServlet</servlet-name>
@@ -18,14 +27,7 @@
 		<url-pattern>/coreServlet</url-pattern>
 	</servlet-mapping>
 
-	<filter>
-		<filter-name>guiceFilter</filter-name>
-		<filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>guiceFilter</filter-name>
-		<url-pattern>/coreServlet/*</url-pattern>
-	</filter-mapping>
+
 	<!-- Disables Servlet Container welcome file handling. Needed for compatibility 
 		with Servlet 3.0 and Tomcat 7.0 -->
 	<welcome-file-list>

@@ -2,6 +2,8 @@ package com.linhongzheng.weixin.services.impl;
 
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
 import com.linhongzheng.weixin.services.IAccessTokenService;
@@ -24,6 +26,7 @@ import com.linhongzheng.weixin.utils.URLConstants;
  *
  * 可以基于Redis的expire机制实现自动删除超时的access_token.
  */
+@Service("accessTokenService")
 public class AccessTokenServiceImpl extends AbstractWeChatService implements
 		IAccessTokenService {
 

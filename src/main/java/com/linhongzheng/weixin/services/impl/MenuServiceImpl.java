@@ -2,8 +2,9 @@ package com.linhongzheng.weixin.services.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.google.inject.Inject;
 import com.linhongzheng.weixin.entity.menu.Button;
 import com.linhongzheng.weixin.entity.menu.ClickButton;
 import com.linhongzheng.weixin.entity.menu.ComplexButton;
@@ -19,11 +20,12 @@ import com.linhongzheng.weixin.utils.URLConstants;
 /**
  * Created by linhz on 2015/8/17.
  */
+@Service("menuService")
 public class MenuServiceImpl extends AbstractWeChatService implements
 		IMenuService {
 	private static Logger log = LoggerFactory.getLogger(MenuServiceImpl.class);
 
-	@Inject
+	@Autowired
 	IAccessTokenService accessTokenService;
 
 	/*
@@ -83,4 +85,13 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 
 		return menu;
 	}
+
+	public IAccessTokenService getAccessTokenService() {
+		return accessTokenService;
+	}
+
+	public void setAccessTokenService(IAccessTokenService accessTokenService) {
+		this.accessTokenService = accessTokenService;
+	}
+	
 }

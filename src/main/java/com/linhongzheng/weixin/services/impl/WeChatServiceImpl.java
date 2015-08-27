@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.google.inject.Inject;
-import com.google.inject.servlet.RequestScoped;
 import com.linhongzheng.weixin.entity.message.MSG_TYPE;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
 import com.linhongzheng.weixin.services.IMessageService;
@@ -27,17 +27,19 @@ import com.qq.weixin.mp.aes.WXBizMsgCrypt;
 /**
  * Created by linhz on 2015/8/17.
  */
+@Service("weChatService") 
 public class WeChatServiceImpl extends AbstractWeChatService implements
 		IWeChatService {
 
-	@Inject
+	@Autowired
 	IMessageService messageService;
 
 	// public WeChatServiceImpl() {
 	// messageService = new MessageServiceImpl();
 	// }
 	@Override
-	public String processRequestRaw(HttpServletRequest request) throws Exception {
+	public String processRequestRaw(HttpServletRequest request)
+			throws Exception {
 		Map<String, String> requestMap = parseRawXml(request);
 
 		return routeMessage(requestMap);
@@ -176,6 +178,14 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 			break;
 		}
 		return respMessage;
+	}
+
+	public IMessageService getMessageService() {
+		return messageService;
+	}
+
+	public void setMessageService(IMessageService messageService) {
+		this.messageService = messageService;
 	}
 
 }

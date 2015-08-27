@@ -1,9 +1,14 @@
 package com.linhongzheng.weixin.services.impl;
 
+import org.springframework.stereotype.Service;
+
 import com.linhongzheng.weixin.dao.BaseDAO;
+import com.linhongzheng.weixin.services.AbstractWeChatService;
 import com.linhongzheng.weixin.services.IUserService;
 
-public class UserServiceImpl implements IUserService {
+@Service("userService")
+public class UserServiceImpl extends AbstractWeChatService implements
+		IUserService {
 
 	@Override
 	public void saveWeiXinUser(String openId) {

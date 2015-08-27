@@ -8,8 +8,9 @@ import java.util.Map;
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.google.inject.Inject;
 import com.linhongzheng.weixin.dao.BaseDAO;
 import com.linhongzheng.weixin.entity.message.MSG_TYPE;
 import com.linhongzheng.weixin.entity.message.event.EVENT_TYPE;
@@ -30,15 +31,14 @@ import com.linhongzheng.weixin.utils.message.MessageUtil;
 /**
  * Created by linhz on 2015/8/17.
  */
-
+@Service("messageService")
 public class MessageServiceImpl extends AbstractWeChatService implements
 		IMessageService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(MessageServiceImpl.class);
-	@Inject
+	@Autowired
 	IEventMessageService eventMessageService;
-
-	@Inject
+	@Autowired
 	IUserService userService;
 
 	/**
@@ -100,8 +100,8 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 						musicAuthor = kwArr[1];
 
 					// 搜索音乐
-					Music music = new BaiduMusicServiceImpl().searchMusic(musicTitle,
-							musicAuthor);
+					Music music = new BaiduMusicServiceImpl().searchMusic(
+							musicTitle, musicAuthor);
 					// 未搜索到音乐
 					if (null == music) {
 						respContent = "对不起，没有找到你想听的歌曲<" + musicTitle + ">。";
@@ -400,4 +400,22 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		textResponseMessage.setMsgType(MSG_TYPE.TEXT.toString().toLowerCase());
 		return textResponseMessage;
 	}
+
+	public IEventMessageService getEventMessageService() {
+		return eventMessageService;
+	}
+
+	public void setEventMessageService(IEventMessageService eventMessageService) {
+		this.eventMessageService = eventMessageService;
+	}
+
+	public IUserService getUserService() {
+		return userService;
+	}
+
+	public void setUserService(IUserService userService) {
+		this.userService = userService;
+	}
+	
+	
 }

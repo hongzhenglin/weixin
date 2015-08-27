@@ -7,11 +7,10 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import com.google.inject.Inject;
 import com.linhongzheng.weixin.services.IMessageService;
 
 public class WeChatServiceTestImpl extends TestCase {
-	@Inject
+ 	 
 	IMessageService messageService;
 
 	@Test

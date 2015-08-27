@@ -14,7 +14,7 @@ public class SignUtil {
 
 	// 与开发模式接口配置信息中的Token保持一致
 	public static final String Token = "weixintest";
-	public static final String EncodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+	public static final String EncodingAesKey = "hkUNxNc8KBakZaCnRv9dwx6Gcj3rtIDNrVmzplHLZIc";
 
 	/**
 	 * msg_signature=sha1(sort(Token、timestamp、nonce, msg_encrypt))
