@@ -40,7 +40,7 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 		try {
 			at = accessTokenService.getAccessToken();
 			if (null != at) {
-				String requestUrl = URLConstants.MENU_CREATE_URL.replace(
+				String requestUrl = URLConstants.MENU.MENU_CREATE_URL.replace(
 						"ACCESS_TOKEN", at);
 				String jsonMenu = JSONUtils.objectToJson(getMenu(), "0");
 				String jsonStr = HttpUtil.post(requestUrl, jsonMenu);
@@ -56,14 +56,24 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 
 	private Menu getMenu() {
 
-		ClickButton btn1 = new ClickButton();
-		btn1.setName("今日歌曲");
-		btn1.setType("click");
-		btn1.setKey("V1001_TODAY_MUSIC");
+		ClickButton btn11 = new ClickButton();
+		btn11.setName("今日歌曲");
+		btn11.setType("click");
+		btn11.setKey("V1001_TODAY_MUSIC");
+
+		ClickButton btn12 = new ClickButton();
+		btn12.setName("开源中国");
+		btn12.setType("click");
+		btn12.setKey("oschina");
+
+		ClickButton btn13 = new ClickButton();
+		btn13.setName("ITeye");
+		btn13.setType("click");
+		btn13.setKey("iteye");
 
 		ViewButton btn2 = new ViewButton();
 		btn2.setName("歌手简介");
-		btn2.setType("View");
+		btn2.setType("view");
 		btn2.setUrl("http://www.qq.com");
 
 		ClickButton btn31 = new ClickButton();
@@ -75,6 +85,10 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 		btn32.setName("赞一下我们");
 		btn32.setType("click");
 		btn32.setKey("V1001_GOOD");
+
+		ComplexButton btn1 = new ComplexButton();
+		btn1.setName("技术交流");
+		btn1.setSub_button(new Button[] { btn11, btn12, btn13 });
 
 		ComplexButton btn3 = new ComplexButton();
 		btn3.setName("生活助手");
@@ -93,5 +107,5 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 	public void setAccessTokenService(IAccessTokenService accessTokenService) {
 		this.accessTokenService = accessTokenService;
 	}
-	
+
 }

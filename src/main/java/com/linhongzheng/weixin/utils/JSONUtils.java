@@ -112,7 +112,7 @@ public class JSONUtils {
 	 *            java对象
 	 * @return json字符串
 	 */
-	public static String ToJsonString(Object obj) {
+	public static String toJsonString(Object obj) {
 		String jsonString = null;
 		try {
 			jsonString = JSON.toJSONString(obj,
@@ -123,10 +123,7 @@ public class JSONUtils {
 		}
 		return jsonString;
 	}
-
-	public static String toJsonString(Object obj) {
-		return ToJsonString(obj);
-	}
+ 
 
 	public static String toPrettyJasonString(Object obj) {
 		String jsonString = null;

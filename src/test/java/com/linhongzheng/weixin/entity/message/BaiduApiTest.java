@@ -10,7 +10,7 @@ public class BaiduApiTest {
 	@Test
 	public void test() {
 
-		Music music = new BaiduMusicServiceImpl().searchMusic("相信自己", "零点乐队");
+		Music music = new BaiduMusicServiceImpl().searchMusic("吻别", "");
 		System.out.println("音乐名称：" + music.getTitle());
 		System.out.println("音乐描述：" + music.getDescription());
 		System.out.println("普通品质链接：" + music.getMusicUrl());

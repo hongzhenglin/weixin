@@ -26,6 +26,7 @@ import com.linhongzheng.weixin.services.IEventMessageService;
 import com.linhongzheng.weixin.services.IMessageService;
 import com.linhongzheng.weixin.services.IUserService;
 import com.linhongzheng.weixin.utils.DateUtil;
+import com.linhongzheng.weixin.utils.face.FacePlusPlusUtils;
 import com.linhongzheng.weixin.utils.message.MessageUtil;
 
 /**
@@ -62,7 +63,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		// 接收用户发送的文本消息内容
 		String content = requestMap.get("Content").trim();
 		// TODO 可以根据数据库的配置做非全文匹配
-
+		LOGGER.info("文本消息内容：" + content);
 		saveTextMessage(requestMap);
 
 		if (content.equals("签到")) {
@@ -85,8 +86,9 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		} else {
 			// 如果以“歌曲”2个字开头
 			if (content.startsWith("歌曲")) {
+				LOGGER.info("百度歌曲搜索API");
 				// 将歌曲2个字及歌曲后面的+、空格、-等特殊符号去掉
-				String keyWord = content.replaceAll("^歌曲[\\+ ~!@#%^-_=]?", "");
+				String keyWord = content.replaceAll("^歌曲[\\+ ~!#@%^-_=]?", "");
 				// 如果歌曲名称为空
 				if ("".equals(keyWord)) {
 					respContent = BaiduMusicServiceImpl.getUsage();
@@ -159,12 +161,19 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 	 */
 	@Override
 	public String handleImageMessage(Map<String, String> requestMap) {
-
 		// 默认回复此文本消息
-		ImageResponseMessage imageResponseMessage = createImageMessage(requestMap);
-		// Image image = createImage();
-		// imageResponseMessage.setImage(image);
-		return MessageUtil.messageToXml(imageResponseMessage);
+		// 发送方帐号（open_id）
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+		TextResponseMessage textResponseMessage = createTextMessage(
+				fromUserName, toUserName);
+		String imageUrl = requestMap.get("PicUrl");
+		String faceJson = FacePlusPlusUtils.detectFace(imageUrl);
+		String content = FacePlusPlusUtils.parseFaceJson(faceJson);
+		System.out.println(content);
+		textResponseMessage.setContent(content);
+		return MessageUtil.messageToXml(textResponseMessage);
 
 	}
 
@@ -219,57 +228,27 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		String responStr = null;
 		String eventType = requestMap.get("Event");
 		// 订阅
-		if (eventType.equals(EVENT_TYPE.SUBSCRIBE)) {
-
+		if (eventType.equals(EVENT_TYPE.SUBSCRIBE.toString().toLowerCase())) {
 			responStr = eventMessageService.handleSubscribeEvent(requestMap);
 		}
 		// 取消订阅
-		else if (eventType.equals(EVENT_TYPE.UNSUBSCRIBE)) {
-			// TODO 取消订阅后用户再收不到公众号发送的消息，因此不需要回复消息
+		else if (eventType.equals(EVENT_TYPE.UNSUBSCRIBE.toString()
+				.toLowerCase())) {
+			// 取消订阅后用户再收不到公众号发送的消息，因此不需要回复消息
 			responStr = eventMessageService.handleUbsubscribeEvent(requestMap);
 		}
 		// 自定义菜单点击事件
 		else if (eventType.equals(EVENT_TYPE.CLICK)) {
-			// 事件KEY值，与创建自定义菜单时指定的KEY值对应
-			String eventKey = requestMap.get("EventKey");
+			responStr = eventMessageService.handleClickEvent(requestMap);
 
-			/*
-			 * if (eventKey.equals("11")) { respMessage = "天气预报菜单项被点击！";
-			 * textMessage.setContent(respMessage); respMessage = MessageUtil.
-			 * messageToXml(textMessage); } else if (eventKey.equals("12")) {
-			 * respMessage = "公交查询菜单项被点击！"; textMessage.setContent(respMessage);
-			 * respMessage = MessageUtil.textMessageToXml(textMessage); } else
-			 * if (eventKey.equals("13")) { respMessage = "周边搜索菜单项被点击！";
-			 * textMessage.setContent(respMessage); respMessage =
-			 * MessageUtil.textMessageToXml(textMessage); } else if
-			 * (eventKey.equals("14")) { respMessage = "历史上的今天菜单项被点击！";
-			 * textMessage.setContent(respMessage); respMessage =
-			 * MessageUtil.textMessageToXml(textMessage); } else if
-			 * (eventKey.equals("21")) { respMessage = "歌曲点播菜单项被点击！";
-			 * textMessage.setContent(respMessage); respMessage =
-			 * MessageUtil.textMessageToXml(textMessage); } else if
-			 * (eventKey.equals("22")) { respMessage = "经典游戏菜单项被点击！";
-			 * textMessage.setContent(respMessage); respMessage =
-			 * MessageUtil.textMessageToXml(textMessage); } else if
-			 * (eventKey.equals("23")) { respMessage = "美女电台菜单项被点击！";
-			 * textMessage.setContent(respMessage); respMessage =
-			 * MessageUtil.textMessageToXml(textMessage); } else if
-			 * (eventKey.equals("24")) { respMessage = "人脸识别菜单项被点击！";
-			 * textMessage.setContent(respMessage); respMessage =
-			 * MessageUtil.textMessageToXml(textMessage); } else if
-			 * (eventKey.equals("25")) { respMessage = "聊天唠嗑菜单项被点击！";
-			 * textMessage.setContent(respMessage); respMessage =
-			 * MessageUtil.textMessageToXml(textMessage); } else if
-			 * (eventKey.equals("31")) { respMessage = "Q友圈菜单项被点击！";
-			 * textMessage.setContent(respMessage); respMessage =
-			 * MessageUtil.textMessageToXml(textMessage); } else if
-			 * (eventKey.equals("32")) { respMessage = "电影排行榜菜单项被点击！";
-			 * textMessage.setContent(respMessage); respMessage =
-			 * MessageUtil.textMessageToXml(textMessage); } else if
-			 * (eventKey.equals("33")) { respMessage = "幽默笑话菜单项被点击！";
-			 * textMessage.setContent(respMessage); respMessage =
-			 * MessageUtil.textMessageToXml(textMessage); }
-			 */
+		} else if (eventType.equals(EVENT_TYPE.VIEW)) {
+
+		} else if (eventType.equals(EVENT_TYPE.SCAN)) {
+
+		} else if (eventType.equals(EVENT_TYPE.LOCATION)) {
+
+		} else {
+
 		}
 		return responStr;
 	}
@@ -416,6 +395,9 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 	public void setUserService(IUserService userService) {
 		this.userService = userService;
 	}
-	
-	
+
+	public static void main(String[] args) {
+		String content = "歌曲@吻别@张学友";
+		System.out.println(content.replaceAll("^歌曲[\\+ ~!#@%^-_=]?", ""));
+	}
 }

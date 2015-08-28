@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,23 +29,22 @@ import com.qq.weixin.mp.aes.WXBizMsgCrypt;
 /**
  * Created by linhz on 2015/8/17.
  */
-@Service("weChatService") 
+@Service("weChatService")
 public class WeChatServiceImpl extends AbstractWeChatService implements
 		IWeChatService {
+
+	private static final Logger log = LoggerFactory
+			.getLogger(WeChatServiceImpl.class);
 
 	@Autowired
 	IMessageService messageService;
 
-	// public WeChatServiceImpl() {
-	// messageService = new MessageServiceImpl();
-	// }
 	@Override
 	public String processRequestRaw(HttpServletRequest request)
 			throws Exception {
 		Map<String, String> requestMap = parseRawXml(request);
 
 		return routeMessage(requestMap);
-
 	}
 
 	private Map<String, String> parseRawXml(HttpServletRequest request)
