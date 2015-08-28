@@ -199,7 +199,11 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
+					<compilerArguments>
+						<extdirs>lib</extdirs>
+					</compilerArguments>
 				</configuration>
+
 			</plugin>
 		</plugins>
 	</build>
