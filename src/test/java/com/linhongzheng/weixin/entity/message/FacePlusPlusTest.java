@@ -1,3 +1,4 @@
+package com.linhongzheng.weixin.entity.message;
 import junit.framework.TestCase;
 
 import org.junit.Test;

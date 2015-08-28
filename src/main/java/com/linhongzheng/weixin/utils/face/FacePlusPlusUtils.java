@@ -63,9 +63,9 @@ public class FacePlusPlusUtils {
 			buffer.append("共检测到").append(faceList.size()).append("张人脸\n\n");
 			for (Face face : faceList) {
 				// 人种
-				buffer.append(face.getGenderValue()).append("人种，");
+				buffer.append(face.getRaceValue()).append("人种，");
 				// 性别
-				buffer.append(face.getRaceValue()).append("，");
+				buffer.append(face.getGenderValue()).append("，");
 				// 年龄
 				buffer.append(face.getAgeValue()).append("岁左右");
 			}
@@ -75,9 +75,9 @@ public class FacePlusPlusUtils {
 					.append("张人脸，按脸部中心位置从左到右依次为：\n\n");
 			for (Face face : faceList) {
 				// 人种
-				buffer.append(face.getGenderValue()).append("人种，");
+				buffer.append(face.getRaceValue()).append("人种，");
 				// 性别
-				buffer.append(face.getRaceValue()).append("，");
+				buffer.append(face.getGenderValue()).append("，");
 				// 年龄
 				buffer.append(face.getAgeValue()).append("岁左右").append("\n");
 			}
