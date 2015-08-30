@@ -14,7 +14,7 @@ import com.linhongzheng.weixin.services.AbstractWeChatService;
 import com.linhongzheng.weixin.services.IAccessTokenService;
 import com.linhongzheng.weixin.services.IMenuService;
 import com.linhongzheng.weixin.utils.HttpUtil;
-import com.linhongzheng.weixin.utils.JSONUtils;
+import com.linhongzheng.weixin.utils.JSONUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
 
 /**
@@ -42,7 +42,7 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 			if (null != at) {
 				String requestUrl = URLConstants.MENU.MENU_CREATE_URL.replace(
 						"ACCESS_TOKEN", at);
-				String jsonMenu = JSONUtils.objectToJson(getMenu(), "0");
+				String jsonMenu = JSONUtil.objectToJson(getMenu(), "0");
 				String jsonStr = HttpUtil.post(requestUrl, jsonMenu);
 
 				System.out.println(jsonStr);

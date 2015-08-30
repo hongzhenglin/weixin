@@ -29,7 +29,7 @@ public class BaiduMusicServiceImpl extends AbstractWeChatService implements
 	 */
 	@Override
 	public Music searchMusic(String musicTitle, String musicAuthor) {
-		String requestUrl = URLConstants.BAIDU_MUSIC_URL;
+		String requestUrl = URLConstants.BAIDU.BAIDU_MUSIC_URL;
 		// 对音乐名称、作者进URL编码
 		requestUrl = requestUrl.replace("{TITLE}", urlEncodeUTF8(musicTitle));
 		requestUrl = requestUrl.replace("{AUTHOR}", urlEncodeUTF8(musicAuthor));

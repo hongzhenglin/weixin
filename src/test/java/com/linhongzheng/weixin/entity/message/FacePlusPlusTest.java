@@ -3,7 +3,7 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import com.linhongzheng.weixin.utils.face.FacePlusPlusUtils;
+import com.linhongzheng.weixin.utils.face.FacePlusPlusUtil;
 
 public class FacePlusPlusTest extends TestCase {
 	private static final String imageUrl = "http://www.faceplusplus.com.cn/wp-content"
@@ -11,8 +11,8 @@ public class FacePlusPlusTest extends TestCase {
 
 	@Test
 	public void testFaceDetect() {
-		String faceJson = FacePlusPlusUtils.detectFace(imageUrl);
-		System.out.println(FacePlusPlusUtils.parseFaceJson(faceJson));
+		String faceJson = FacePlusPlusUtil.detectFace(imageUrl);
+		System.out.println(FacePlusPlusUtil.parseFaceJson(faceJson));
 	}
 
 }

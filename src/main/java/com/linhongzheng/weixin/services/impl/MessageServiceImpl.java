@@ -26,7 +26,7 @@ import com.linhongzheng.weixin.services.IEventMessageService;
 import com.linhongzheng.weixin.services.IMessageService;
 import com.linhongzheng.weixin.services.IUserService;
 import com.linhongzheng.weixin.utils.DateUtil;
-import com.linhongzheng.weixin.utils.face.FacePlusPlusUtils;
+import com.linhongzheng.weixin.utils.face.FacePlusPlusUtil;
 import com.linhongzheng.weixin.utils.message.MessageUtil;
 
 /**
@@ -169,8 +169,8 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		TextResponseMessage textResponseMessage = createTextMessage(
 				fromUserName, toUserName);
 		String imageUrl = requestMap.get("PicUrl");
-		String faceJson = FacePlusPlusUtils.detectFace(imageUrl);
-		String content = FacePlusPlusUtils.parseFaceJson(faceJson);
+		String faceJson = FacePlusPlusUtil.detectFace(imageUrl);
+		String content = FacePlusPlusUtil.parseFaceJson(faceJson);
 		System.out.println(content);
 		textResponseMessage.setContent(content);
 		return MessageUtil.messageToXml(textResponseMessage);
