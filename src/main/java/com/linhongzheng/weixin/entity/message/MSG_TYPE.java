@@ -13,5 +13,6 @@ public enum MSG_TYPE {
     LINK ,
     EVENT ,
     MUSIC ,
-    NEWS;
+    NEWS,
+   TRANSFER_CUSTOMER_SERVICE;
 }

@@ -27,7 +27,7 @@ import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.VedioResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.VoiceResponseMessage;
 import com.linhongzheng.weixin.utils.HttpUtil;
-import com.linhongzheng.weixin.utils.StringUtils;
+import com.linhongzheng.weixin.utils.StringUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
 import com.linhongzheng.weixin.utils.XStreamUtil;
 import com.thoughtworks.xstream.XStream;
@@ -346,7 +346,7 @@ public class MessageUtil {
 		json.put("msgid", msgid);
 		String result = HttpUtil.post(
 				URLConstants.MASS_DELETE_URL.concat(accessToken), json);
-		if (StringUtils.isNotEmpty(result)) {
+		if (StringUtil.isNotEmpty(result)) {
 			return JSONObject.parseObject(result);
 		}
 		return null;

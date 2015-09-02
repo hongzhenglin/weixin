@@ -16,4 +16,6 @@ public interface IBaiduMusicService {
 	 */
 	public abstract Music searchMusic(String musicTitle, String musicAuthor);
 
+	public abstract String getUsage();
+
 }

@@ -174,7 +174,8 @@ public class BaiduMusicServiceImpl extends AbstractWeChatService implements
 	 * 
 	 * @return
 	 */
-	public static String getUsage() {
+	@Override
+	public String getUsage() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("歌曲点播操作指南").append("\n\n");
 		buffer.append("回复：歌曲+歌名").append("\n");

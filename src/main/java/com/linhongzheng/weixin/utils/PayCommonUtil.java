@@ -33,8 +33,8 @@ public class PayCommonUtil {
 	}
 
 	/**
-	 * @author 李欣桦
-	 * @date 2014-12-5下午2:29:34
+	 * 
+	 * 
 	 * @Description：sign签名
 	 * @param characterEncoding
 	 *            编码格式
@@ -57,14 +57,14 @@ public class PayCommonUtil {
 			}
 		}
 		sb.append("key=" + ConfigUtil.API_KEY);
-		String sign = MD5Util.MD5Encode(sb.toString(), characterEncoding)
+		String sign = Md5Util.encrypt(sb.toString())
 				.toUpperCase();
 		return sign;
 	}
 
 	/**
-	 * @author 李欣桦
-	 * @date 2014-12-5下午2:32:05
+	 * 
+	 * 
 	 * @Description：将请求参数转换为xml格式的string
 	 * @param parameters
 	 *            请求参数

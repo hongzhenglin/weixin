@@ -6,6 +6,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -19,6 +20,10 @@ import org.apache.commons.lang.math.NumberUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.linhongzheng.weixin.entity.message.MSG_TYPE;
+import com.linhongzheng.weixin.entity.message.response.Music;
+import com.linhongzheng.weixin.entity.message.response.MusicResponseMessage;
+import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
 import com.linhongzheng.weixin.utils.ConfigUtil;
 import com.linhongzheng.weixin.utils.HttpUtil;
 import com.linhongzheng.weixin.utils.SignUtil;
@@ -253,5 +258,31 @@ public abstract class AbstractWeChatService {
 			return (null != version && NumberUtils.toInt(version) >= 5);
 		}
 		return false;
+	}
+
+	protected TextResponseMessage createTextMessage(String fromUserName,
+			String toUserName) {
+		TextResponseMessage textResponseMessage = new TextResponseMessage();
+		textResponseMessage.setToUserName(fromUserName);
+		textResponseMessage.setFromUserName(toUserName);
+		textResponseMessage.setCreateTime(new Date().getTime());
+		textResponseMessage.setMsgType(MSG_TYPE.TEXT.toString().toLowerCase());
+		return textResponseMessage;
+	}
+
+	protected MusicResponseMessage createMusicMessage(
+			Map<String, String> requestMap, Music music) {
+		// 发送方帐号（open_id）
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+		// 音乐消息
+		MusicResponseMessage musicMessage = new MusicResponseMessage();
+		musicMessage.setToUserName(fromUserName);
+		musicMessage.setFromUserName(toUserName);
+		musicMessage.setCreateTime(new Date().getTime());
+		musicMessage.setMsgType(MSG_TYPE.MUSIC.toString().toLowerCase());
+		musicMessage.setMusic(music);
+		return musicMessage;
 	}
 }

@@ -91,7 +91,7 @@ public class HttpUtil {
         AsyncHttpClient http = new AsyncHttpClient();
         AsyncHttpClient.BoundRequestBuilder builder = http.preparePost(url);
         builder.setBodyEncoding(DEFAULT_CHARSET);
-        if (StringUtils.isNotEmpty( params )) {
+        if (StringUtil.isNotEmpty( params )) {
         	Part stringPart = new StringPart(null,params);
             builder.addBodyPart(stringPart);
         }

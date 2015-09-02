@@ -73,7 +73,7 @@ public class ConfigUtil {
 			String groupName = null;
 			String propKey = null;
 			StringTokenizer st = null;
-			if (StringUtils.isEmpty(propKey)) {
+			if (StringUtil.isEmpty(propKey)) {
 				for (Iterator<?> it = cfgs.entrySet().iterator(); it.hasNext();) {
 					Entry<?, ?> e = (Entry<?, ?>) it.next();
 					cKey = (String) e.getKey();

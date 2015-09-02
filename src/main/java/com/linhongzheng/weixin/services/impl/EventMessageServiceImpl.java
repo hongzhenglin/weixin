@@ -28,10 +28,23 @@ public class EventMessageServiceImpl extends AbstractWeChatService implements
 
 	@Override
 	public String handleSubscribeEvent(Map<String, String> requestMap) {
-		TextResponseMessage textMessage = new TextResponseMessage();
-		String respMessage = "谢谢您的关注！";
-		textMessage.setContent(respMessage);
-		userService.saveWeiXinUser(requestMap.get("FromUserName"));
+		// 发送方帐号（open_id）
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+		
+		userService.saveWeiXinUser(fromUserName);
+		
+		TextResponseMessage textMessage = createTextMessage(fromUserName,
+				toUserName);
+		StringBuilder sb = new StringBuilder();
+		sb.append("谢谢您的关注！当前不在关注时间 :)。本公众号提供下面几个功能：\n\n")
+				.append("1. 歌曲点播,输入：歌曲歌曲名称，例如歌曲吻别\n")
+				.append("2.天气预报,输入：天气城市名，例如天气广州或者广州天气\n")
+				.append("3.游戏，输入：2048\n").append("4.签到功能，输入：签到\n")
+				.append("5.人脸识别，上传小于2M的照片.\n")
+				.append("6.欢迎加入微社区交流");
+		textMessage.setContent(sb.toString());
 		return MessageUtil.messageToXml(textMessage);
 	}
 
@@ -43,10 +56,12 @@ public class EventMessageServiceImpl extends AbstractWeChatService implements
 
 	@Override
 	public String handleClickEvent(Map<String, String> requestMap) {
-		TextResponseMessage textMessage = new TextResponseMessage();
+
 		String fromUserName = requestMap.get("FromUserName");
 		// 公众帐号
 		String toUserName = requestMap.get("ToUserName");
+		TextResponseMessage textMessage = createTextMessage(fromUserName,
+				toUserName);
 		String respMessage = null;
 		// 事件KEY值，与创建自定义菜单时指定的KEY值对应
 		String eventKey = requestMap.get("EventKey");

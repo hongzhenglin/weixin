@@ -13,8 +13,8 @@ public class UserServiceImpl extends AbstractWeChatService implements
 	@Override
 	public void saveWeiXinUser(String openId) {
 
-		String insertSql = "INSERT INTO weixin_user(open_id,subscribe_ime,subscribe_status)"
-				+ " values(?,now(), 1)";
+		String insertSql = "INSERT INTO weixin_user(open_id,subscribe_time,subscribe_status)"
+				+ " values(?, now(), 1)";
 		new BaseDAO<Integer>().update(insertSql, openId);
 
 	}
