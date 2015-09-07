@@ -2,6 +2,7 @@ package com.linhongzheng.weixin.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -186,9 +187,7 @@ public abstract class AbstractWeChatService {
 	 * @throws ExecutionException
 	 */
 	public static Map<String, Object> uploadMedia(String accessToken,
-			String type, File file) throws KeyManagementException,
-			NoSuchAlgorithmException, NoSuchProviderException, IOException,
-			ExecutionException, InterruptedException {
+			String type, File file) throws Exception {
 		String url = URLConstants.UPLOAD_MEDIA_URL + accessToken + "&type="
 				+ type;
 		List<File> fileList = new ArrayList<File>();
@@ -209,9 +208,7 @@ public abstract class AbstractWeChatService {
 	 * @throws IOException
 	 * @throws NoSuchProviderException
 	 */
-	public static JSONObject getTicket(String accessToken)
-			throws InterruptedException, ExecutionException,
-			NoSuchAlgorithmException, KeyManagementException, IOException,
+	public static JSONObject getTicket(String accessToken) throws Exception,
 			NoSuchProviderException {
 		String jsonStr = HttpUtil.get(URLConstants.JSAPI_TICKET
 				.concat(accessToken));
@@ -265,7 +262,7 @@ public abstract class AbstractWeChatService {
 		TextResponseMessage textResponseMessage = new TextResponseMessage();
 		textResponseMessage.setToUserName(fromUserName);
 		textResponseMessage.setFromUserName(toUserName);
-		textResponseMessage.setCreateTime(new Date().getTime());
+		textResponseMessage.setCreateTime(new Date().getTime() / 1000);
 		textResponseMessage.setMsgType(MSG_TYPE.TEXT.toString().toLowerCase());
 		return textResponseMessage;
 	}
@@ -285,4 +282,5 @@ public abstract class AbstractWeChatService {
 		musicMessage.setMusic(music);
 		return musicMessage;
 	}
+
 }

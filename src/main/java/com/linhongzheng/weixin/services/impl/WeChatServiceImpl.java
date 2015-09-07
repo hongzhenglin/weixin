@@ -47,6 +47,14 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 		return routeMessage(requestMap);
 	}
 
+	@Override
+	public String processRequestCrypt(HttpServletRequest request)
+			throws Exception {
+		Map<String, String> requestMap = parseCryptXml(request);
+		String replyMsg = routeMessage(requestMap);
+		return postHandler(request, replyMsg);
+	}
+
 	private Map<String, String> parseRawXml(HttpServletRequest request)
 			throws IOException {
 		// 验证消息
@@ -63,14 +71,6 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 			requestMap = MessageUtil.parseXml(request);
 		}
 		return requestMap;
-	}
-
-	@Override
-	public String processRequestCrypt(HttpServletRequest request)
-			throws Exception {
-		Map<String, String> requestMap = parseCryptXml(request);
-		String replyMsg = routeMessage(requestMap);
-		return postHandler(request, replyMsg);
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 		case EVENT: // 事件消息
 			respMessage = messageService.handleEventMessage(requestMap);
 			break;
-		case TRANSFER_CUSTOMER_SERVICE: //客服消息
+		case TRANSFER_CUSTOMER_SERVICE: // 客服消息
 		default:
 			respMessage = messageService.handleDefaultResp(requestMap);
 			break;

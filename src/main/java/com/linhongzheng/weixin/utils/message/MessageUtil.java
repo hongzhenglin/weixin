@@ -341,7 +341,7 @@ public class MessageUtil {
 	 * @throws IOException
 	 */
 	public JSONObject massSend(String accessToken, String msgid)
-			throws IOException, ExecutionException, InterruptedException {
+			throws  Exception {
 		Map<String, String> json = new HashMap<String, String>();
 		json.put("msgid", msgid);
 		String result = HttpUtil.post(

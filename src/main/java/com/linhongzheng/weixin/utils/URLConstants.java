@@ -63,6 +63,9 @@ public class URLConstants {
 	}
 
 	public static class BAIDU {
+		// 百度翻译地址
+		public static final String BAIDU_TRANSLATE_URL = "http://openapi.baidu.com/public/2.0/bmt/translate?client_id={AK}&q={keyWord}&from=auto&to=auto";
+		
 		// 百度音乐搜索地址
 		public static final String BAIDU_MUSIC_URL = "http://box.zhangmen.baidu.com/x?op=12&count=1&title={TITLE}$${AUTHOR}";
 

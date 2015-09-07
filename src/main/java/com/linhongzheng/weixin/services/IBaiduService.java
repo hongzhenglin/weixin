@@ -1,9 +1,9 @@
 package com.linhongzheng.weixin.services;
 
 import com.linhongzheng.weixin.entity.message.response.Music;
+import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
 
- 
-public interface IBaiduMusicService {
+public interface IBaiduService {
 
 	/**
 	 * 根据名称和作者搜索音乐
@@ -16,6 +16,13 @@ public interface IBaiduMusicService {
 	 */
 	public abstract Music searchMusic(String musicTitle, String musicAuthor);
 
-	public abstract String getUsage();
+	public abstract void queryWeather(String cityName,
+			NewsResponseMessage newsRespMessage);
+
+	public abstract String translate(String source);
+
+	public abstract String getMusicUsage();
+
+	public abstract String getTranslateUsage();
 
 }

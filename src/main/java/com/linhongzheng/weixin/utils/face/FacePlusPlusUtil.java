@@ -102,9 +102,7 @@ public class FacePlusPlusUtil {
 		String respStr = null;
 		try {
 			respStr = HttpUtil.get(requestUrl);
-		} catch (KeyManagementException | NoSuchAlgorithmException
-				| NoSuchProviderException | IOException | ExecutionException
-				| InterruptedException e) {
+		} catch ( Exception e) {
 
 			e.printStackTrace();
 		}

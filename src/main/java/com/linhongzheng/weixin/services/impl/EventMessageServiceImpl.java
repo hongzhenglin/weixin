@@ -43,7 +43,7 @@ public class EventMessageServiceImpl extends AbstractWeChatService implements
 				.append("2.天气预报,输入：天气城市名，例如天气广州或者广州天气\n")
 				.append("3.游戏，输入：2048\n").append("4.签到功能，输入：签到\n")
 				.append("5.人脸识别，上传小于2M的照片.\n")
-				.append("6.欢迎加入微社区交流");
+				.append("6.欢迎加入微社区交流  /::D");
 		textMessage.setContent(sb.toString());
 		return MessageUtil.messageToXml(textMessage);
 	}

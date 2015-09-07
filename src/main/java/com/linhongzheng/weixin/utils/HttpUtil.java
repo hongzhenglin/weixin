@@ -38,7 +38,7 @@ public class HttpUtil {
      * @throws KeyManagementException
      * @description 功能描述: get 请求
      */
-    public static String get(String url) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, IOException, ExecutionException, InterruptedException {
+    public static String get(String url) throws Exception {
         return get(url, null);
     }
 
@@ -51,7 +51,7 @@ public class HttpUtil {
      * @throws UnsupportedEncodingException
      * @description 功能描述: get 请求
      */
-    public static String get(String url, Map<String, String> params) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, UnsupportedEncodingException, IOException, ExecutionException, InterruptedException {
+    public static String get(String url, Map<String, String> params) throws Exception {
         return get(url, params, null);
     }
 
@@ -64,7 +64,7 @@ public class HttpUtil {
      * @throws KeyManagementException
      * @description 功能描述: get 请求
      */
-    public static String get(String url, Map<String, String> params, Map<String, String> headers) throws IOException, ExecutionException, InterruptedException {
+    public static String get(String url, Map<String, String> params, Map<String, String> headers) throws  Exception {
         AsyncHttpClient http = new AsyncHttpClient();
         AsyncHttpClient.BoundRequestBuilder builder = http.prepareGet(url);
         builder.setBodyEncoding(DEFAULT_CHARSET);
@@ -87,7 +87,7 @@ public class HttpUtil {
     }
 
      
-    public static String post(String url, String params) throws IOException, ExecutionException, InterruptedException {
+    public static String post(String url, String params) throws  Exception {
         AsyncHttpClient http = new AsyncHttpClient();
         AsyncHttpClient.BoundRequestBuilder builder = http.preparePost(url);
         builder.setBodyEncoding(DEFAULT_CHARSET);
@@ -109,7 +109,7 @@ public class HttpUtil {
      * @throws KeyManagementException
      * @description 功能描述: POST 请求
      */
-    public static String post(String url,Map<String, String>  params) throws IOException, ExecutionException, InterruptedException {
+    public static String post(String url,Map<String, String>  params) throws  Exception {
         AsyncHttpClient http = new AsyncHttpClient();
         AsyncHttpClient.BoundRequestBuilder builder = http.preparePost(url);
         builder.setBodyEncoding(DEFAULT_CHARSET);
@@ -136,7 +136,7 @@ public class HttpUtil {
      * @throws NoSuchProviderException
      * @throws KeyManagementException
      */
-    public static String upload(String url, List<File> fileList, Map<String, String> paramsMap) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, KeyManagementException, ExecutionException, InterruptedException {
+    public static String upload(String url, List<File> fileList, Map<String, String> paramsMap) throws  Exception {
         String responseBody = null;
         if (url != null && fileList != null && fileList.size() > 0) {
 

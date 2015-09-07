@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.linhongzheng.weixin.dao.BaseDAO;
-import com.linhongzheng.weixin.demo.weather.entity.WeatherData;
 import com.linhongzheng.weixin.entity.message.MSG_TYPE;
 import com.linhongzheng.weixin.entity.message.event.EVENT_TYPE;
 import com.linhongzheng.weixin.entity.message.response.Article;
@@ -23,16 +22,16 @@ import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.VoiceResponseMessage;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
-import com.linhongzheng.weixin.services.IBaiduMusicService;
+import com.linhongzheng.weixin.services.IBaiduService;
 import com.linhongzheng.weixin.services.IEventMessageService;
 import com.linhongzheng.weixin.services.IMessageService;
+import com.linhongzheng.weixin.services.ITodayInHistoryService;
 import com.linhongzheng.weixin.services.IUserService;
 import com.linhongzheng.weixin.utils.ConfigUtil;
 import com.linhongzheng.weixin.utils.DateUtil;
 import com.linhongzheng.weixin.utils.StringUtil;
 import com.linhongzheng.weixin.utils.face.FacePlusPlusUtil;
 import com.linhongzheng.weixin.utils.message.MessageUtil;
-import com.linhongzheng.weixin.utils.weather.WeatherUtil;
 
 /**
  * Created by linhz on 2015/8/17.
@@ -49,7 +48,49 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 	IUserService userService;
 
 	@Autowired
-	IBaiduMusicService baiduMusicService;
+	IBaiduService baiduService;
+
+	@Autowired
+	ITodayInHistoryService todayInHistoryService;
+
+	/**
+	 * @param requestMap
+	 * @return
+	 */
+	@Override
+	public String handleDefaultResp(Map<String, String> requestMap) {
+		// 发送方帐号（open_id）
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+		// 默认回复此文本消息
+		TextResponseMessage textResponseMessage = createTextMessage(
+				fromUserName, toUserName);
+
+		// 由于href属性值必须用双引号引起，这与字符串本身的双引号冲突，所以要转义
+		StringBuffer contentMsg = new StringBuffer();
+		contentMsg.append(
+				"欢迎访问<a href=\"http://chatcourse.duapp.com\">个人主页</a>").append(
+				"\n");
+		contentMsg.append("您好，我是机器人小Q，请回复数字选择服务：").append("\n\n");
+		contentMsg.append("1 天气预报").append("\n");
+		contentMsg.append("2 公交查询").append("\n");
+		contentMsg.append("3 周边搜索").append("\n");
+		contentMsg.append("4 歌曲点播").append("\n");
+		contentMsg.append("5 经典游戏").append("\n");
+		contentMsg.append("6 美女电台").append("\n");
+		contentMsg.append("7 人脸识别").append("\n");
+		contentMsg.append("8 聊天唠嗑").append("\n");
+		contentMsg.append("9 电影排行榜").append("\n");
+		contentMsg.append("10 Q友圈").append("\n\n");
+		contentMsg
+				.append("点击查看 <a href=\"http://chatcourse.duapp.com\">帮助手册</a>");
+
+		textResponseMessage.setContent(contentMsg.toString());
+		// 将文本消息对象转换成xml字符串
+		return MessageUtil.messageToXml(textResponseMessage);
+
+	}
 
 	/**
 	 * @param requestMap
@@ -74,45 +115,27 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		saveTextMessage(requestMap);
 
 		if (content.equals("签到")) {
-			if (userService.isTodaySign(fromUserName)) {
-				textResponseMessage.setContent("今天已经签到过，不用再签到");
-			} else {
-				String monday = DateUtil.getMondayOfWeek();
-				if (userService.isWeekySign(fromUserName, monday)) {
-					userService.saveWeiXinSign(fromUserName, 12);
-					userService.updateUserPoints(fromUserName, 12);
-					textResponseMessage.setContent("恭喜您本周第7次签到成功，额外送您10个积分");
-				} else {
-					userService.saveWeiXinSign(fromUserName, 2);
-					userService.updateUserPoints(fromUserName, 2);
-					textResponseMessage.setContent("恭喜您已签到成功，送您2个积分");
-				}
-			}
-
+			sign(fromUserName, textResponseMessage);
 		} else if (content.startsWith("天气") || content.endsWith("天气")) {
-			String cityName = content.trim().replace("天气", "");
-			NewsResponseMessage newsMessage = createNewsMessage(requestMap);
-			WeatherUtil.queryWeather(cityName, newsMessage);
-			return MessageUtil.messageToXml(newsMessage);
-
-			// String result = WeatherUtil.queryWeather(cityName);
-			// textResponseMessage.setContent(result);
+			return queryWeather(requestMap, content);
 		} else if (content.equals("2048")) {
-			ConfigUtil configUtil = new ConfigUtil("host.properties");
-			String hostUrl = configUtil.getValue("LOCALHOST_URL");
-			List<Article> articleList = new ArrayList<Article>();
-			NewsResponseMessage newsMessage = createNewsMessage(requestMap);
-			Article article = new Article();
+			return youxi(requestMap);
 
-			article.setTitle("挑战2048");
-			article.setDescription("这么好玩的游戏，快来挑战您的智商吧！");
-			article.setPicUrl(hostUrl + "/image/2048/demo.jpg");
-			article.setUrl(hostUrl + "/2048/index.html");
+		} else if (content.equals("自行车")) {
+			textResponseMessage.setContent("这辆" + MessageUtil.emoji(0x1F6B2)
+					+ "怎么样，好看吗？");
+		} else if (content.equals("历史上的今天")) {
+			textResponseMessage.setContent(todayInHistoryService
+					.getTodayInHistoryInfo());
+		} else if (content.startsWith("翻译")) {
 
-			articleList.add(article);
-			newsMessage.setArticleCount(articleList.size());
-			newsMessage.setArticles(articleList);
-			return MessageUtil.messageToXml(newsMessage);
+			String keyWord = content.replaceAll("^翻译", "").trim();
+			if ("".equals(keyWord)) {
+				textResponseMessage
+						.setContent(baiduService.getTranslateUsage());
+			} else {
+				textResponseMessage.setContent(baiduService.translate(keyWord));
+			}
 
 		} else {
 			// 文本消息内容
@@ -124,7 +147,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 				String keyWord = content.replaceAll("^歌曲[\\+ ~!#@%^-_=]?", "");
 				// 如果歌曲名称为空
 				if ("".equals(keyWord)) {
-					respContent = baiduMusicService.getUsage();
+					respContent = baiduService.getMusicUsage();
 				} else {
 					String[] kwArr = keyWord.split("@");
 					// 歌曲名称
@@ -136,7 +159,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 					LOGGER.info("百度歌曲搜索,歌曲名称" + musicTitle + "  演唱者："
 							+ musicAuthor);
 					// 搜索音乐
-					Music music = baiduMusicService.searchMusic(musicTitle,
+					Music music = baiduService.searchMusic(musicTitle,
 							musicAuthor);
 					LOGGER.info("百度歌曲搜索结果：" + music.toString());
 					// 未搜索到音乐
@@ -145,7 +168,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 					} else {
 						MusicResponseMessage musicMessage = createMusicMessage(
 								requestMap, music);
-						
+
 						respXml = MessageUtil.messageToXml(musicMessage);
 						LOGGER.info("百度歌曲搜索返回," + respXml);
 						return respXml;
@@ -154,7 +177,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 				// 未搜索到音乐时返回使用指南
 				if (null == respXml) {
 					if (null == respContent)
-						respContent = baiduMusicService.getUsage();
+						respContent = baiduService.getMusicUsage();
 					textResponseMessage.setContent(respContent);
 				}
 			}
@@ -167,19 +190,6 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		}
 		respXml = MessageUtil.messageToXml(textResponseMessage);
 		return respXml;
-	}
-
-	private void saveTextMessage(Map<String, String> requestMap) {
-
-		String openId = requestMap.get("FromUserName");
-		String content = requestMap.get("Content");
-		String remark = "SAE MySQL Test";
-		String insertSql = "INSERT INTO tb_message_text(open_id, content, create_time,remark) VALUES (?, ?, ?,?)";
-		QueryRunner qr = new QueryRunner();
-
-		new BaseDAO<Integer>().update(insertSql, openId, content, new Date(),
-				remark);
-
 	}
 
 	/**
@@ -206,23 +216,16 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 
 	@Override
 	public String handleVoiceMessage(Map<String, String> requestMap) {
-		VoiceResponseMessage voiceResponseMessage = createVoiceMessage(requestMap);
-
-		// respMessage = "您发送的是音频消息！";
-		// textMessage.setContent(respMessage);
-		return MessageUtil.messageToXml(voiceResponseMessage);
-	}
-
-	private VoiceResponseMessage createVoiceMessage(
-			Map<String, String> requestMap) {
-		VoiceResponseMessage voiceResponseMessage = new VoiceResponseMessage();
 		// 发送方帐号（open_id）
 		String fromUserName = requestMap.get("FromUserName");
 		// 公众帐号
 		String toUserName = requestMap.get("ToUserName");
-		String respMessage = "您发送的是音频消息！";
-		// voiceResponseMessage.s(respMessage);
-		return voiceResponseMessage;
+		TextResponseMessage textResponseMessage = createTextMessage(
+				fromUserName, toUserName);
+
+		textResponseMessage.setContent("您发送的是音频内容是："
+				+ requestMap.get("Recognition"));
+		return MessageUtil.messageToXml(textResponseMessage);
 	}
 
 	@Override
@@ -232,17 +235,23 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 
 	@Override
 	public String handleLinkMessage(Map<String, String> requestMap) {
-		/*
-		 * createLink respMessage = "您发送的是地理位置消息！";
-		 * textMessage.setContent(respMessage);
-		 */
-		// respMessage = MessageUtil.messageToXml(textMessage);
+
 		return null;
 	}
 
 	@Override
 	public String handleLocationMessage(Map<String, String> requestMap) {
-		return null;
+		// 发送方帐号（open_id）
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+		TextResponseMessage textResponseMessage = createTextMessage(
+				fromUserName, toUserName);
+
+		textResponseMessage
+				.setContent("您目前所在的地理位置是：" + requestMap.get("Label"));
+
+		return MessageUtil.messageToXml(textResponseMessage);
 	}
 
 	@Override
@@ -334,7 +343,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		NewsResponseMessage newsMessage = new NewsResponseMessage();
 		newsMessage.setToUserName(fromUserName);
 		newsMessage.setFromUserName(toUserName);
-		newsMessage.setCreateTime(new Date().getTime());
+		newsMessage.setCreateTime(new Date().getTime() / 1000);
 		newsMessage.setMsgType(MSG_TYPE.NEWS.toString().toLowerCase());
 		return newsMessage;
 	}
@@ -352,48 +361,78 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		ImageResponseMessage imageResponseMessage = new ImageResponseMessage();
 		imageResponseMessage.setToUserName(fromUserName);
 		imageResponseMessage.setFromUserName(toUserName);
-		imageResponseMessage.setCreateTime(new Date().getTime());
+		imageResponseMessage.setCreateTime(new Date().getTime() / 1000);
 		imageResponseMessage
 				.setMsgType(MSG_TYPE.IMAGE.toString().toLowerCase());
 		return imageResponseMessage;
 	}
 
-	/**
-	 * @param requestMap
-	 * @return
-	 */
-	@Override
-	public String handleDefaultResp(Map<String, String> requestMap) {
+	private VoiceResponseMessage createVoiceMessage(
+			Map<String, String> requestMap) {
+		VoiceResponseMessage voiceResponseMessage = new VoiceResponseMessage();
 		// 发送方帐号（open_id）
 		String fromUserName = requestMap.get("FromUserName");
 		// 公众帐号
 		String toUserName = requestMap.get("ToUserName");
-		// 默认回复此文本消息
-		TextResponseMessage textResponseMessage = createTextMessage(
-				fromUserName, toUserName);
+		String respMessage = "您发送的是音频消息！";
+		// voiceResponseMessage.s(respMessage);
+		return voiceResponseMessage;
+	}
 
-		// 由于href属性值必须用双引号引起，这与字符串本身的双引号冲突，所以要转义
-		StringBuffer contentMsg = new StringBuffer();
-		contentMsg.append(
-				"欢迎访问<a href=\"http://chatcourse.duapp.com\">个人主页</a>").append(
-				"\n");
-		contentMsg.append("您好，我是机器人小Q，请回复数字选择服务：").append("\n\n");
-		contentMsg.append("1 天气预报").append("\n");
-		contentMsg.append("2 公交查询").append("\n");
-		contentMsg.append("3 周边搜索").append("\n");
-		contentMsg.append("4 歌曲点播").append("\n");
-		contentMsg.append("5 经典游戏").append("\n");
-		contentMsg.append("6 美女电台").append("\n");
-		contentMsg.append("7 人脸识别").append("\n");
-		contentMsg.append("8 聊天唠嗑").append("\n");
-		contentMsg.append("9 电影排行榜").append("\n");
-		contentMsg.append("10 Q友圈").append("\n\n");
-		contentMsg
-				.append("点击查看 <a href=\"http://chatcourse.duapp.com\">帮助手册</a>");
+	private String queryWeather(Map<String, String> requestMap, String content) {
+		String cityName = content.trim().replace("天气", "");
+		NewsResponseMessage newsMessage = createNewsMessage(requestMap);
+		baiduService.queryWeather(cityName, newsMessage);
+		return MessageUtil.messageToXml(newsMessage);
 
-		textResponseMessage.setContent(contentMsg.toString());
-		// 将文本消息对象转换成xml字符串
-		return MessageUtil.messageToXml(textResponseMessage);
+	}
+
+	private String youxi(Map<String, String> requestMap) {
+		ConfigUtil configUtil = new ConfigUtil("host.properties");
+		String hostUrl = configUtil.getValue("LOCALHOST_URL");
+		List<Article> articleList = new ArrayList<Article>();
+		NewsResponseMessage newsMessage = createNewsMessage(requestMap);
+		Article article = new Article();
+
+		article.setTitle("挑战2048");
+		article.setDescription("这么好玩的游戏，快来挑战您的智商吧！");
+		article.setPicUrl(hostUrl + "/image/2048/demo.jpg");
+		article.setUrl(hostUrl + "/2048/index.html");
+
+		articleList.add(article);
+		newsMessage.setArticleCount(articleList.size());
+		newsMessage.setArticles(articleList);
+		return MessageUtil.messageToXml(newsMessage);
+	}
+
+	private void sign(String fromUserName,
+			TextResponseMessage textResponseMessage) {
+		if (userService.isTodaySign(fromUserName)) {
+			textResponseMessage.setContent("今天已经签到过，不用再签到");
+		} else {
+			String monday = DateUtil.getMondayOfWeek();
+			if (userService.isWeekySign(fromUserName, monday)) {
+				userService.saveWeiXinSign(fromUserName, 12);
+				userService.updateUserPoints(fromUserName, 12);
+				textResponseMessage.setContent("恭喜您本周第7次签到成功，额外送您10个积分");
+			} else {
+				userService.saveWeiXinSign(fromUserName, 2);
+				userService.updateUserPoints(fromUserName, 2);
+				textResponseMessage.setContent("恭喜您已签到成功，送您2个积分");
+			}
+		}
+	}
+
+	private void saveTextMessage(Map<String, String> requestMap) {
+
+		String openId = requestMap.get("FromUserName");
+		String content = requestMap.get("Content");
+		String remark = "SAE MySQL Test";
+		String insertSql = "INSERT INTO tb_message_text(open_id, content, create_time,remark) VALUES (?, ?, ?,?)";
+		QueryRunner qr = new QueryRunner();
+
+		new BaseDAO<Integer>().update(insertSql, openId, content, new Date(),
+				remark);
 
 	}
 
@@ -413,12 +452,21 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		this.userService = userService;
 	}
 
-	public IBaiduMusicService getBaiduMusicService() {
-		return baiduMusicService;
+	public ITodayInHistoryService getTodayInHistoryService() {
+		return todayInHistoryService;
 	}
 
-	public void setBaiduMusicService(IBaiduMusicService baiduMusicService) {
-		this.baiduMusicService = baiduMusicService;
+	public void setTodayInHistoryService(
+			ITodayInHistoryService todayInHistoryService) {
+		this.todayInHistoryService = todayInHistoryService;
+	}
+
+	public IBaiduService getBaiduService() {
+		return baiduService;
+	}
+
+	public void setBaiduService(IBaiduService baiduService) {
+		this.baiduService = baiduService;
 	}
 
 	public static void main(String[] args) {
