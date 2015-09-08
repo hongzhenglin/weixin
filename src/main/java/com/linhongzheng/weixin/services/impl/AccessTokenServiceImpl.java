@@ -34,7 +34,7 @@ public class AccessTokenServiceImpl extends AbstractWeChatService implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.linhongzheng.weixin.services.impl.IAccessTokenService#getAccessToken
+	 * com.linhongzheng.weixin.services.IAccessTokenService#getAccessToken
 	 * ()
 	 */
 	@Override
@@ -47,7 +47,7 @@ public class AccessTokenServiceImpl extends AbstractWeChatService implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.linhongzheng.weixin.services.impl.IAccessTokenService#getAccessToken
+	 * com.linhongzheng.weixin.services.IAccessTokenService#getAccessToken
 	 * (java.lang.String, java.lang.String)
 	 */
 	@Override

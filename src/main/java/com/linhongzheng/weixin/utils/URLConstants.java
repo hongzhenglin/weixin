@@ -8,22 +8,35 @@ public class URLConstants {
 	public static final String MASS_DELETE_URL = "https://api.weixin.qq.com//cgi-bin/message/mass/delete?access_token=";
 	public static final String TEMPLATE_SEND_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=";
 	public static final String PAYFEEDBACK_URL = "https://api.weixin.qq.com/payfeedback/update";
-	
+
+	// 获取token接口(GET)
+	public static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
+	// 刷新access_token接口（GET）
+	public final static String REFRESH_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=APPID&grant_type=refresh_token&refresh_token=REFRESH_TOKEN";
+
+	public static class CUSTOM {
+		// 增加客服接口
+		public final static String ADD_CUSTOMER_URL = "https://api.weixin.qq.com/customservice/kfaccount/add?access_token=ACCESS_TOKEN";
+		// 更新客服接口
+		public final static String UPDATE_CUSTOMER_URL = "https://api.weixin.qq.com/customservice/kfaccount/update?access_token=ACCESS_TOKEN";
+
+		public final static String DEL_CUSTOMER_URL = "https://api.weixin.qq.com/customservice/kfaccount/del?access_token=ACCESS_TOKEN";
+
+		public final static String LIST_CUSTOMER_URL = "https://api.weixin.qq.com/cgi-bin/customservice/getkflist?access_token=ACCESS_TOKEN";
+		// 设置客服头像 POST/FORM
+		public final static String UPLOAD_HEADIMAGE_URL = "http://api.weixin.qq.com/customservice/kfaccount/uploadheadimg?access_token=ACCESS_TOKEN&kf_account=KFACCOUNT";
+
+		public final static String SEND_MESSAGE_URL = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN";
+
+	}
+
 	/**
 	 * 微信基础接口地址
 	 */
 
-	 
 	// oauth2授权接口(GET)
 	public final static String OAUTH2_URL = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
-	// 刷新access_token接口（GET）
-	public final static String REFRESH_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=APPID&grant_type=refresh_token&refresh_token=REFRESH_TOKEN";
-	// 菜单创建接口（POST）
-	public final static String MENU_CREATE_URL = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
-	// 菜单查询（GET）
-	public final static String MENU_GET_URL = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=ACCESS_TOKEN";
-	// 菜单删除（GET）
-	public final static String MENU_DELETE_URL = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=ACCESS_TOKEN";
+
 	/**
 	 * 微信支付接口地址
 	 */
@@ -47,13 +60,11 @@ public class URLConstants {
 	public static final String UPLOAD_MEDIA_URL = "http://file.api.weixin.qq.com/cgi-bin/media/upload?access_token=";
 	public static final String JSAPI_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=";
 
-	// 获取token接口(GET)
-	public static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
-
 	/**
 	 * 自定义菜单
 	 */
 	public static class MENU {
+
 		// 创建菜单URL POST
 		public static final String MENU_CREATE_URL = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
 		// 查询菜单URL GET
@@ -65,7 +76,7 @@ public class URLConstants {
 	public static class BAIDU {
 		// 百度翻译地址
 		public static final String BAIDU_TRANSLATE_URL = "http://openapi.baidu.com/public/2.0/bmt/translate?client_id={AK}&q={keyWord}&from=auto&to=auto";
-		
+
 		// 百度音乐搜索地址
 		public static final String BAIDU_MUSIC_URL = "http://box.zhangmen.baidu.com/x?op=12&count=1&title={TITLE}$${AUTHOR}";
 

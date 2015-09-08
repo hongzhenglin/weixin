@@ -1,4 +1,4 @@
-package com.linhongzheng.weixin.entity.message;
+package com.linhongzheng.weixin.message;
 
 import com.linhongzheng.weixin.services.IAccessTokenService;
 import com.linhongzheng.weixin.services.impl.AccessTokenServiceImpl;

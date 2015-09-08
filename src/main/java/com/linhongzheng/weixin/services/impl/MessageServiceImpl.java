@@ -208,7 +208,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		String imageUrl = requestMap.get("PicUrl");
 		String faceJson = FacePlusPlusUtil.detectFace(imageUrl);
 		String content = FacePlusPlusUtil.parseFaceJson(faceJson);
-		System.out.println(content);
+ 
 		textResponseMessage.setContent(content);
 		return MessageUtil.messageToXml(textResponseMessage);
 
@@ -335,6 +335,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		return respMessage;
 	}
 
+	
 	private NewsResponseMessage createNewsMessage(Map<String, String> requestMap) {
 		// 发送方帐号（open_id）
 		String fromUserName = requestMap.get("FromUserName");

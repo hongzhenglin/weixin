@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.entity.menu.Button;
 import com.linhongzheng.weixin.entity.menu.ClickButton;
 import com.linhongzheng.weixin.entity.menu.ComplexButton;
@@ -13,6 +15,7 @@ import com.linhongzheng.weixin.entity.menu.ViewButton;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
 import com.linhongzheng.weixin.services.IAccessTokenService;
 import com.linhongzheng.weixin.services.IMenuService;
+import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.HttpUtil;
 import com.linhongzheng.weixin.utils.JSONUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
@@ -31,7 +34,7 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.linhongzheng.weixin.services.impl.IMenuService#creatMenu()
+	 * @see com.linhongzheng.weixin.services.IMenuService#creatMenu()
 	 */
 	@Override
 	public void creatMenu() {
@@ -43,9 +46,19 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 				String requestUrl = URLConstants.MENU.MENU_CREATE_URL.replace(
 						"ACCESS_TOKEN", at);
 				String jsonMenu = JSONUtil.objectToJson(getMenu(), "0");
-				String jsonStr = HttpUtil.post(requestUrl, jsonMenu);
+				System.out.println(jsonMenu);
+				String jsonStr = CommonUtil.httpsRequest(requestUrl, "POST",
+						jsonMenu);
+				if (jsonStr != null) {
+					JSONObject jsonObject = JSON.parseObject(jsonStr);
+					int errcode = jsonObject.getIntValue("errcode");
+					if (errcode != 0) {
+						log.error(jsonObject.getString("errmsg"));
+					} else {
+						log.info(jsonStr);
+					}
+				}
 
-				System.out.println(jsonStr);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -54,12 +67,12 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 
 	}
 
-	private Menu getMenu() {
+	private static Menu getMenu() {
 
-		ClickButton btn11 = new ClickButton();
-		btn11.setName("今日歌曲");
-		btn11.setType("click");
-		btn11.setKey("V1001_TODAY_MUSIC");
+		ViewButton btn11 = new ViewButton();
+		btn11.setName("CocoaChina");
+		btn11.setType("view");
+		btn11.setUrl("http://www.iteye.com");
 
 		ClickButton btn12 = new ClickButton();
 		btn12.setName("开源中国");
@@ -71,28 +84,77 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 		btn13.setType("click");
 		btn13.setKey("iteye");
 
-		ViewButton btn2 = new ViewButton();
-		btn2.setName("歌手简介");
-		btn2.setType("view");
-		btn2.setUrl("http://www.qq.com");
+		ClickButton btn14 = new ClickButton();
+		btn14.setName("开源中国");
+		btn14.setType("click");
+		btn14.setKey("oschina");
 
-		ClickButton btn31 = new ClickButton();
-		btn31.setName("Hello world");
-		btn31.setType("click");
-		btn31.setKey("V1001_HELLO_WORLD");
+		ClickButton btn15 = new ClickButton();
+		btn15.setName("ITeye");
+		btn15.setType("click");
+		btn15.setKey("iteye");
 
-		ClickButton btn32 = new ClickButton();
-		btn32.setName("赞一下我们");
-		btn32.setType("click");
-		btn32.setKey("V1001_GOOD");
+		ViewButton btn21 = new ViewButton();
+		btn21.setName("京东");
+		btn21.setType("view");
+		btn21.setUrl("http://m.jd.com");
+
+		ViewButton btn22 = new ViewButton();
+		btn22.setName("淘宝");
+		btn22.setType("view");
+		btn22.setUrl("http://m.taobao.com");
+
+		ViewButton btn23 = new ViewButton();
+		btn23.setName("唯品会");
+		btn23.setType("view");
+		btn23.setUrl("http://m.vipshop.com");
+
+		ViewButton btn24 = new ViewButton();
+		btn24.setName("当当网");
+		btn24.setType("view");
+		btn24.setUrl("http://m.dangdang.com");
+
+		ViewButton btn25 = new ViewButton();
+		btn25.setName("苏宁易趣");
+		btn25.setType("view");
+		btn25.setUrl("http://m.suning.com");
+
+		ViewButton btn31 = new ViewButton();
+		btn31.setName("多泡");
+		btn31.setType("view");
+		btn31.setUrl("http://www.duopao.com");
+
+		ViewButton btn32 = new ViewButton();
+		btn32.setName("一窝88");
+		btn32.setType("view");
+		btn32.setUrl("http://yi588.com");
+
+		ViewButton btn33 = new ViewButton();
+		btn33.setName("多泡");
+		btn33.setType("view");
+		btn33.setUrl("http://www.duopao.com");
+
+		ViewButton btn34 = new ViewButton();
+		btn34.setName("一窝88");
+		btn34.setType("view");
+		btn34.setUrl("http://yi588.com");
+
+		ViewButton btn35 = new ViewButton();
+		btn35.setName("多泡");
+		btn35.setType("view");
+		btn35.setUrl("http://www.duopao.com");
 
 		ComplexButton btn1 = new ComplexButton();
 		btn1.setName("技术交流");
-		btn1.setSub_button(new Button[] { btn11, btn12, btn13 });
+		btn1.setSub_button(new Button[] { btn11, btn12, btn13, btn14, btn15 });
+
+		ComplexButton btn2 = new ComplexButton();
+		btn2.setName("购物");
+		btn2.setSub_button(new Button[] { btn21, btn22, btn23, btn24, btn25 });
 
 		ComplexButton btn3 = new ComplexButton();
-		btn3.setName("生活助手");
-		btn3.setSub_button(new Button[] { btn31, btn32 });
+		btn3.setName("网页游戏");
+		btn3.setSub_button(new Button[] { btn31, btn32, btn33, btn34, btn35 });
 
 		Menu menu = new Menu();
 		menu.setButton(new Button[] { btn1, btn2, btn3 });
@@ -108,4 +170,24 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 		this.accessTokenService = accessTokenService;
 	}
 
+	public static void main(String[] args) throws Exception {
+		String requestUrl = URLConstants.MENU.MENU_CREATE_URL
+				.replace(
+						"ACCESS_TOKEN",
+						"rLzBtDXhuzc5BUQ50RfSrZ_4ez9zzjcD6rLPZEfB7H34ItyYV_uPJRijQNnU9x3WAErqE-LF-mBs1KybnGrhG1EaQhkl5Yty_vOEd-GSSWQ");
+		String jsonMenu = JSONUtil.objectToJson(getMenu(), "0");
+		System.out.println(jsonMenu);
+		System.out.println(requestUrl);
+		String jsonStr = CommonUtil.httpsRequest(requestUrl, "POST", jsonMenu);
+
+		if (jsonStr != null) {
+			JSONObject jsonObject = JSON.parseObject(jsonStr);
+			int errcode = jsonObject.getIntValue("errcode");
+			if (errcode != 0) {
+				log.error(jsonObject.getString("errmsg"));
+			} else {
+				log.info(jsonStr);
+			}
+		}
+	}
 }

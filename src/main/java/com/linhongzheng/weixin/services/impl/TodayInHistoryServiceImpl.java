@@ -1,10 +1,5 @@
 package com.linhongzheng.weixin.services.impl;
 
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,12 +7,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 
 import com.linhongzheng.weixin.services.ITodayInHistoryService;
 import com.linhongzheng.weixin.utils.DateUtil;
 import com.linhongzheng.weixin.utils.HttpUtil;
 import com.linhongzheng.weixin.utils.StringUtil;
 
+@Service("todayInHistoryService")
 public class TodayInHistoryServiceImpl implements ITodayInHistoryService {
 
 	private static final String TODAY_IN_HISTORY_URL = "http://www.rijiben.com";
