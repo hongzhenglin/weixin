@@ -14,10 +14,27 @@ public interface IEventMessageService {
 
 	public abstract String handleClickEvent(Map<String, String> requestMap);
 
+	public abstract String handleViewEvent(Map<String, String> requestMap);
+
 	public abstract String handleScanEvent(Map<String, String> requestMap);
 
+	//处理上报地理位置事件
 	public abstract String handleLocationEvent(Map<String, String> requestMap);
 
-	public abstract String handleViewEvent(Map<String, String> requestMap);
+	public abstract String handleScancodePushEvent(
+			Map<String, String> requestMap);
+
+	public abstract String handleScancodeWaitmsgEvent(
+			Map<String, String> requestMap);
+
+	public abstract String handlePicSysphotoEvent(Map<String, String> requestMap);
+
+	public abstract String handlePicPhotoOrAlbumEvent(
+			Map<String, String> requestMap);
+
+	public abstract String handlePicWeixinEvent(Map<String, String> requestMap);
+
+	public abstract String handleLocationSelectEvent(
+			Map<String, String> requestMap);
 
 }

@@ -23,7 +23,7 @@ public class CommonUtil {
 	private static Logger log = LoggerFactory.getLogger(CommonUtil.class);
 	private static final DateFormat format = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");
- 
+
 	/**
 	 * 将微信消息中的CreateTime转换成标准格式的时间（yyyy-MM-dd HH:mm:ss）
 	 * 
@@ -52,6 +52,7 @@ public class CommonUtil {
 	public static String httpsRequest(String requestUrl, String requestMethod,
 			String outputStr) {
 		try {
+			requestMethod = requestMethod.toUpperCase();
 			// 创建SSLContext对象，并使用我们指定的信任管理器初始化
 			TrustManager[] tm = { new MyX509TrustManager() };
 			SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");

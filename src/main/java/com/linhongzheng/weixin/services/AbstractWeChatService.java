@@ -1,14 +1,10 @@
 package com.linhongzheng.weixin.services;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
@@ -19,14 +15,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.entity.message.MSG_TYPE;
+import com.linhongzheng.weixin.entity.message.response.ImageResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.Music;
 import com.linhongzheng.weixin.entity.message.response.MusicResponseMessage;
+import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
+import com.linhongzheng.weixin.entity.message.response.VoiceResponseMessage;
+import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.ConfigUtil;
-import com.linhongzheng.weixin.utils.HttpUtil;
 import com.linhongzheng.weixin.utils.SignUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
 import com.qq.weixin.mp.aes.AesException;
@@ -173,28 +171,6 @@ public abstract class AbstractWeChatService {
 	 * = GET_MEDIA_URL + accessToken + "&media_id=" + mediaId; return
 	 * HttpKit.download(url); }
 	 */
-	/**
-	 * 上传素材文件
-	 *
-	 * @param type
-	 * @param file
-	 * @return
-	 * @throws java.security.KeyManagementException
-	 * @throws java.security.NoSuchAlgorithmException
-	 * @throws java.security.NoSuchProviderException
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @throws ExecutionException
-	 */
-	public static Map<String, Object> uploadMedia(String accessToken,
-			String type, File file) throws Exception {
-		String url = URLConstants.UPLOAD_MEDIA_URL + accessToken + "&type="
-				+ type;
-		List<File> fileList = new ArrayList<File>();
-		fileList.add(file);
-		String jsonStr = HttpUtil.upload(url, fileList, null);
-		return JSON.parseObject(jsonStr, Map.class);
-	}
 
 	/**
 	 * 获得jsapi_ticket（有效期7200秒)
@@ -210,8 +186,8 @@ public abstract class AbstractWeChatService {
 	 */
 	public static JSONObject getTicket(String accessToken) throws Exception,
 			NoSuchProviderException {
-		String jsonStr = HttpUtil.get(URLConstants.JSAPI_TICKET
-				.concat(accessToken));
+		String jsonStr = CommonUtil.httpsRequest(
+				URLConstants.JSAPI_TICKET.concat(accessToken), "GET", null);
 		return JSONObject.parseObject(jsonStr);
 	}
 
@@ -267,6 +243,36 @@ public abstract class AbstractWeChatService {
 		return textResponseMessage;
 	}
 
+	protected TextResponseMessage createTextMessage(
+			Map<String, String> requestMap) {
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+
+		TextResponseMessage textMessage = createTextMessage(fromUserName,
+				toUserName);
+		return textMessage;
+	}
+
+	/**
+	 * @param requestMap
+	 * @return
+	 */
+	protected ImageResponseMessage createImageMessage(
+			Map<String, String> requestMap) {
+		// 发送方帐号（open_id）
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+		ImageResponseMessage imageResponseMessage = new ImageResponseMessage();
+		imageResponseMessage.setToUserName(fromUserName);
+		imageResponseMessage.setFromUserName(toUserName);
+		imageResponseMessage.setCreateTime(new Date().getTime() / 1000);
+		imageResponseMessage
+				.setMsgType(MSG_TYPE.IMAGE.toString().toLowerCase());
+		return imageResponseMessage;
+	}
+
 	protected MusicResponseMessage createMusicMessage(
 			Map<String, String> requestMap, Music music) {
 		// 发送方帐号（open_id）
@@ -283,4 +289,39 @@ public abstract class AbstractWeChatService {
 		return musicMessage;
 	}
 
+	protected NewsResponseMessage createNewsMessage(
+			Map<String, String> requestMap) {
+		// 发送方帐号（open_id）
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+		NewsResponseMessage newsMessage = new NewsResponseMessage();
+		newsMessage.setToUserName(fromUserName);
+		newsMessage.setFromUserName(toUserName);
+		newsMessage.setCreateTime(new Date().getTime() / 1000);
+		newsMessage.setMsgType(MSG_TYPE.NEWS.toString().toLowerCase());
+		return newsMessage;
+	}
+
+	protected VoiceResponseMessage createVoiceMessage(
+			Map<String, String> requestMap) {
+		VoiceResponseMessage voiceResponseMessage = new VoiceResponseMessage();
+		// 发送方帐号（open_id）
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+		String respMessage = "您发送的是音频消息！";
+		// voiceResponseMessage.s(respMessage);
+		return voiceResponseMessage;
+	}
+
+	public static void main(String[] args) {
+		ConfigUtil configUtil = new ConfigUtil();
+		String appId = configUtil.getValue("AppId");
+		String oauthUrl = "http://linhzweixintest.sinaapp.com/oauthServlet";
+		System.out.println(URLConstants.OAUTH.OAUTH2_CODE_URL
+				.replace("REDIRECT_URI", CommonUtil.urlEncodeUTF8(oauthUrl))
+				.replace("APPID", appId).replace("SCOPE", "snsapi_userinfo")
+				.toString());
+	}
 }

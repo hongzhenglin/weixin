@@ -1,13 +1,8 @@
 package com.linhongzheng.weixin.utils.face;
 
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -102,7 +97,7 @@ public class FacePlusPlusUtil {
 		String respStr = null;
 		try {
 			respStr = HttpUtil.get(requestUrl);
-		} catch ( Exception e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 		}

@@ -10,7 +10,7 @@ public class MsgTypeTest {
 	@Test
 	public void test() {
 		String msgType = "text";
-		System.out.println(EVENT_TYPE.SUBSCRIBE);
+		System.out.println(EVENT_TYPE.subscribe);
 		switch (MSG_TYPE.valueOf(msgType.toUpperCase())) {
 			case TEXT:    // 文本消息
 				System.out.println("text");

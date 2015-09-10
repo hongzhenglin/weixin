@@ -59,13 +59,9 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 	 */
 	@Override
 	public String handleDefaultResp(Map<String, String> requestMap) {
-		// 发送方帐号（open_id）
-		String fromUserName = requestMap.get("FromUserName");
-		// 公众帐号
-		String toUserName = requestMap.get("ToUserName");
+
 		// 默认回复此文本消息
-		TextResponseMessage textResponseMessage = createTextMessage(
-				fromUserName, toUserName);
+		TextResponseMessage textResponseMessage = createTextMessage(requestMap);
 
 		// 由于href属性值必须用双引号引起，这与字符串本身的双引号冲突，所以要转义
 		StringBuffer contentMsg = new StringBuffer();
@@ -104,10 +100,8 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 
 		// 发送方帐号（open_id）
 		String fromUserName = requestMap.get("FromUserName");
-		// 公众帐号
-		String toUserName = requestMap.get("ToUserName");
-		TextResponseMessage textResponseMessage = createTextMessage(
-				fromUserName, toUserName);
+
+		TextResponseMessage textResponseMessage = createTextMessage(requestMap);
 		// 接收用户发送的文本消息内容
 		String content = requestMap.get("Content").trim();
 		// TODO 可以根据数据库的配置做非全文匹配
@@ -199,16 +193,12 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 	@Override
 	public String handleImageMessage(Map<String, String> requestMap) {
 		// 默认回复此文本消息
-		// 发送方帐号（open_id）
-		String fromUserName = requestMap.get("FromUserName");
-		// 公众帐号
-		String toUserName = requestMap.get("ToUserName");
-		TextResponseMessage textResponseMessage = createTextMessage(
-				fromUserName, toUserName);
+
+		TextResponseMessage textResponseMessage = createTextMessage(requestMap);
 		String imageUrl = requestMap.get("PicUrl");
 		String faceJson = FacePlusPlusUtil.detectFace(imageUrl);
 		String content = FacePlusPlusUtil.parseFaceJson(faceJson);
- 
+
 		textResponseMessage.setContent(content);
 		return MessageUtil.messageToXml(textResponseMessage);
 
@@ -216,12 +206,8 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 
 	@Override
 	public String handleVoiceMessage(Map<String, String> requestMap) {
-		// 发送方帐号（open_id）
-		String fromUserName = requestMap.get("FromUserName");
-		// 公众帐号
-		String toUserName = requestMap.get("ToUserName");
-		TextResponseMessage textResponseMessage = createTextMessage(
-				fromUserName, toUserName);
+
+		TextResponseMessage textResponseMessage = createTextMessage(requestMap);
 
 		textResponseMessage.setContent("您发送的是音频内容是："
 				+ requestMap.get("Recognition"));
@@ -247,10 +233,9 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		String toUserName = requestMap.get("ToUserName");
 		TextResponseMessage textResponseMessage = createTextMessage(
 				fromUserName, toUserName);
-
-		textResponseMessage
-				.setContent("您目前所在的地理位置是：" + requestMap.get("Label"));
-
+		String content = "您目前所在的地理位置是：" + requestMap.get("Label");
+		textResponseMessage.setContent(content);
+		LOGGER.info(content);
 		return MessageUtil.messageToXml(textResponseMessage);
 	}
 
@@ -264,27 +249,38 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		String responStr = null;
 		String eventType = requestMap.get("Event");
 		// 订阅
-		if (eventType.equals(EVENT_TYPE.SUBSCRIBE.toString().toLowerCase())) {
+		if (eventType.equals(EVENT_TYPE.subscribe.toString())) {
 			responStr = eventMessageService.handleSubscribeEvent(requestMap);
 		}
-		// 取消订阅
-		else if (eventType.equals(EVENT_TYPE.UNSUBSCRIBE.toString()
-				.toLowerCase())) {
+
+		else if (eventType.equals(EVENT_TYPE.unsubscribe.toString())) {// 取消订阅
 			// 取消订阅后用户再收不到公众号发送的消息，因此不需要回复消息
 			responStr = eventMessageService.handleUbsubscribeEvent(requestMap);
+		} else if (eventType.equals(EVENT_TYPE.SCAN.toString())) { // 用户已关注时的事件推送
+			responStr = eventMessageService.handleScanEvent(requestMap);
+		} else if (eventType.equals(EVENT_TYPE.LOCATION.toString())) { // 上报地理位置事件
+			responStr = eventMessageService.handleLocationEvent(requestMap);
 		}
 		// 自定义菜单点击事件
-		else if (eventType.equals(EVENT_TYPE.CLICK)) {
+		else if (eventType.equals(EVENT_TYPE.CLICK.toString())) {
 			responStr = eventMessageService.handleClickEvent(requestMap);
-
-		} else if (eventType.equals(EVENT_TYPE.VIEW)) {
-
-		} else if (eventType.equals(EVENT_TYPE.SCAN)) {
-
-		} else if (eventType.equals(EVENT_TYPE.LOCATION)) {
-
-		} else {
-
+		} else if (eventType.equals(EVENT_TYPE.VIEW.toString())) {
+			responStr = eventMessageService.handleViewEvent(requestMap);
+		} else if (eventType.equals(EVENT_TYPE.scancode_push.toString())) {
+			responStr = eventMessageService.handleScancodePushEvent(requestMap);
+		} else if (eventType.equals(EVENT_TYPE.scancode_waitmsg.toString())) {
+			responStr = eventMessageService
+					.handleScancodeWaitmsgEvent(requestMap);
+		} else if (eventType.equals(EVENT_TYPE.pic_sysphoto.toString())) {
+			responStr = eventMessageService.handlePicSysphotoEvent(requestMap);
+		} else if (eventType.equals(EVENT_TYPE.pic_photo_or_album.toString())) {
+			responStr = eventMessageService
+					.handlePicPhotoOrAlbumEvent(requestMap);
+		} else if (eventType.equals(EVENT_TYPE.pic_weixin.toString())) {
+			responStr = eventMessageService.handlePicWeixinEvent(requestMap);
+		} else if (eventType.equals(EVENT_TYPE.location_select.toString())) {
+			responStr = eventMessageService
+					.handleLocationSelectEvent(requestMap);
 		}
 		return responStr;
 	}
@@ -336,50 +332,6 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 	}
 
 	
-	private NewsResponseMessage createNewsMessage(Map<String, String> requestMap) {
-		// 发送方帐号（open_id）
-		String fromUserName = requestMap.get("FromUserName");
-		// 公众帐号
-		String toUserName = requestMap.get("ToUserName");
-		NewsResponseMessage newsMessage = new NewsResponseMessage();
-		newsMessage.setToUserName(fromUserName);
-		newsMessage.setFromUserName(toUserName);
-		newsMessage.setCreateTime(new Date().getTime() / 1000);
-		newsMessage.setMsgType(MSG_TYPE.NEWS.toString().toLowerCase());
-		return newsMessage;
-	}
-
-	/**
-	 * @param requestMap
-	 * @return
-	 */
-	private ImageResponseMessage createImageMessage(
-			Map<String, String> requestMap) {
-		// 发送方帐号（open_id）
-		String fromUserName = requestMap.get("FromUserName");
-		// 公众帐号
-		String toUserName = requestMap.get("ToUserName");
-		ImageResponseMessage imageResponseMessage = new ImageResponseMessage();
-		imageResponseMessage.setToUserName(fromUserName);
-		imageResponseMessage.setFromUserName(toUserName);
-		imageResponseMessage.setCreateTime(new Date().getTime() / 1000);
-		imageResponseMessage
-				.setMsgType(MSG_TYPE.IMAGE.toString().toLowerCase());
-		return imageResponseMessage;
-	}
-
-	private VoiceResponseMessage createVoiceMessage(
-			Map<String, String> requestMap) {
-		VoiceResponseMessage voiceResponseMessage = new VoiceResponseMessage();
-		// 发送方帐号（open_id）
-		String fromUserName = requestMap.get("FromUserName");
-		// 公众帐号
-		String toUserName = requestMap.get("ToUserName");
-		String respMessage = "您发送的是音频消息！";
-		// voiceResponseMessage.s(respMessage);
-		return voiceResponseMessage;
-	}
-
 	private String queryWeather(Map<String, String> requestMap, String content) {
 		String cityName = content.trim().replace("天气", "");
 		NewsResponseMessage newsMessage = createNewsMessage(requestMap);

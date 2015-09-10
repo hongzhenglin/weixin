@@ -147,6 +147,7 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 	 */
 	private String routeMessage(Map<String, String> requestMap) {
 		String respMessage = null;
+		log.info("微信转发的消息内容："+requestMap.toString());
 		// 消息类型
 		String msgType = requestMap.get("MsgType");
 		switch (MSG_TYPE.valueOf(msgType.toUpperCase())) {

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
 import com.linhongzheng.weixin.services.IAccessTokenService;
-import com.linhongzheng.weixin.utils.HttpUtil;
+import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
 
 /**
@@ -33,8 +33,7 @@ public class AccessTokenServiceImpl extends AbstractWeChatService implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.linhongzheng.weixin.services.IAccessTokenService#getAccessToken
+	 * @see com.linhongzheng.weixin.services.IAccessTokenService#getAccessToken
 	 * ()
 	 */
 	@Override
@@ -46,8 +45,7 @@ public class AccessTokenServiceImpl extends AbstractWeChatService implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.linhongzheng.weixin.services.IAccessTokenService#getAccessToken
+	 * @see com.linhongzheng.weixin.services.IAccessTokenService#getAccessToken
 	 * (java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -57,7 +55,7 @@ public class AccessTokenServiceImpl extends AbstractWeChatService implements
 
 		String requestUrl = URLConstants.ACCESS_TOKEN_URL.replace("APPID",
 				appId).replace("APPSECRET", appSecret);
-		String jsonStr = HttpUtil.get(requestUrl);
+		String jsonStr = CommonUtil.httpsRequest(requestUrl, "GET", null);
 		Map<String, Object> map = JSONObject.parseObject(jsonStr);
 		Object accessToken = map.get("access_token");
 		Object errCode = map.get("errcode");

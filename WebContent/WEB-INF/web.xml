@@ -10,12 +10,12 @@
         classpath*:applicationContext.xml
 		</param-value>
 	</context-param>
-	
+
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-	 
- 
+
+
 	<!-- Processes application requests -->
 	<servlet>
 		<servlet-name>coreServlet</servlet-name>
@@ -25,6 +25,16 @@
 	<servlet-mapping>
 		<servlet-name>coreServlet</servlet-name>
 		<url-pattern>/coreServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>oauthServlet</servlet-name>
+		<servlet-class>com.linhongzheng.weixin.servlets.OAuthServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>oauthServlet</servlet-name>
+		<url-pattern>/oauthServlet</url-pattern>
 	</servlet-mapping>
 
 

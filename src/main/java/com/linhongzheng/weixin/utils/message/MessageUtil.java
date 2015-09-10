@@ -9,7 +9,6 @@ import java.security.NoSuchProviderException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,7 +25,7 @@ import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.VedioResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.VoiceResponseMessage;
-import com.linhongzheng.weixin.utils.HttpUtil;
+import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.StringUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
 import com.linhongzheng.weixin.utils.XStreamUtil;
@@ -40,9 +39,6 @@ public class MessageUtil {
 		return parseInXml(request.getInputStream());
 
 	}
-
-	
-	
 
 	public static Map parseInXml(InputStream in) {
 		Map<String, String> map = new HashMap<String, String>();
@@ -117,21 +113,6 @@ public class MessageUtil {
 	 */
 	public static String emoji(int hexEmoji) {
 		return String.valueOf(Character.toChars(hexEmoji));
-	}
-
-	/**
-	 * 发送客服消息
-	 *
-	 * @param accessToken
-	 * @param message
-	 * @return
-	 * @throws Exception
-	 */
-	private String sendMsg(String accessToken, Map<String, String> message)
-			throws Exception {
-		String result = HttpUtil.post(
-				URLConstants.MESSAGE_URL.concat(accessToken), message);
-		return result;
 	}
 
 	/**
@@ -341,11 +322,10 @@ public class MessageUtil {
 	 * @throws IOException
 	 */
 	public JSONObject massSend(String accessToken, String msgid)
-			throws  Exception {
-		Map<String, String> json = new HashMap<String, String>();
-		json.put("msgid", msgid);
-		String result = HttpUtil.post(
-				URLConstants.MASS_DELETE_URL.concat(accessToken), json);
+			throws Exception {
+
+		String result = CommonUtil.httpsRequest(URLConstants.MASS_DELETE_URL
+				.concat(accessToken).toString(), "POST", "msgid=" + msgid);
 		if (StringUtil.isNotEmpty(result)) {
 			return JSONObject.parseObject(result);
 		}

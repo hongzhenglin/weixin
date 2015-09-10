@@ -20,6 +20,9 @@ public class MenuTest extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testCreateMenu() {
 		menuService.creatMenu();
+		menuService.queryMenu();
+//		menuService.deleteMenu();
+//		menuService.creatMenu();
 		// {"errcode":48001,"errmsg":"api unauthorized"}
 	}
 

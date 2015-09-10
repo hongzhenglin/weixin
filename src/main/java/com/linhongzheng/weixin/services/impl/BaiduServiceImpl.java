@@ -1,21 +1,11 @@
 package com.linhongzheng.weixin.services.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -180,6 +170,7 @@ public class BaiduServiceImpl extends AbstractWeChatService implements
 		String sourceText = null;
 		try {
 			sourceText = HttpUtil.get(requestUrl);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -234,14 +225,14 @@ public class BaiduServiceImpl extends AbstractWeChatService implements
 	}
 
 	private WeatherResp queryWeatherResp(String cityName) {
-		String url = URLConstants.BAIDU.BAIDU_WEATHER_URL.replace("{LOCATION}",
-				CommonUtil.urlEncodeUTF8(cityName));
+		String requestUrl = URLConstants.BAIDU.BAIDU_WEATHER_URL.replace(
+				"{LOCATION}", CommonUtil.urlEncodeUTF8(cityName));
 		ConfigUtil config = new ConfigUtil("baidu.properties");
-		url = url.replace("{AK}", config.getValue("AK"));
+		requestUrl = requestUrl.replace("{AK}", config.getValue("AK"));
 
 		WeatherResp weatherResp = null;
 		try {
-			String result = HttpUtil.get(url);
+			String result = HttpUtil.get(requestUrl);
 			weatherResp = JSONUtil.jsonToObject(result, WeatherResp.class);
 		} catch (Exception e) {
 

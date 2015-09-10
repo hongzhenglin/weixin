@@ -2,6 +2,7 @@ package com.linhongzheng.weixin.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -78,15 +79,16 @@ public class CoreServlet extends HttpServlet {
 	}
 
 	/**
+	 * @throws UnsupportedEncodingException 
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
 	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response) throws ServletException, IOException {
 
-		LOGGER.info("进入到doPost方法。");
+		LOGGER.info("进入到CoreServlet doPost方法。");
 		// 将请求、响应的编码均设置为UTF-8（防止中文乱码）
-		response.setCharacterEncoding("UTF-8");
+		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/xml");
 		// inj.getInstance(IWeChatService.class);

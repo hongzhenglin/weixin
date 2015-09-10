@@ -10,6 +10,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import com.linhongzheng.weixin.services.ITodayInHistoryService;
+import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.DateUtil;
 import com.linhongzheng.weixin.utils.HttpUtil;
 import com.linhongzheng.weixin.utils.StringUtil;
@@ -28,7 +29,7 @@ public class TodayInHistoryServiceImpl implements ITodayInHistoryService {
 		// 获取网页源代码
 		String html = null;
 		try {
-			html = HttpUtil.get(TODAY_IN_HISTORY_URL);
+			html = HttpUtil.get( TODAY_IN_HISTORY_URL );
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
