@@ -320,7 +320,7 @@ public abstract class AbstractWeChatService {
 		String appId = configUtil.getValue("AppId");
 		String oauthUrl = "http://linhzweixintest.sinaapp.com/oauthServlet";
 		System.out.println(URLConstants.OAUTH.OAUTH2_CODE_URL
-				.replace("REDIRECT_URI", CommonUtil.urlEncodeUTF8(oauthUrl))
+				.replace("REDIRECT_URI",  oauthUrl)
 				.replace("APPID", appId).replace("SCOPE", "snsapi_userinfo")
 				.toString());
 	}

@@ -18,7 +18,7 @@ public interface IEventMessageService {
 
 	public abstract String handleScanEvent(Map<String, String> requestMap);
 
-	//处理上报地理位置事件
+	// 处理上报地理位置事件
 	public abstract String handleLocationEvent(Map<String, String> requestMap);
 
 	public abstract String handleScancodePushEvent(
@@ -35,6 +35,9 @@ public interface IEventMessageService {
 	public abstract String handlePicWeixinEvent(Map<String, String> requestMap);
 
 	public abstract String handleLocationSelectEvent(
+			Map<String, String> requestMap);
+
+	public abstract String handleTemplateSendJobFinishEvent(
 			Map<String, String> requestMap);
 
 }

@@ -199,7 +199,7 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 		ViewButton btn33 = new ViewButton();
 		btn33.setName("OAuth2.0测试");
 		btn33.setType("view");
-		btn33.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx16c644d1873b9073&redirect_uri=http%3A%2F%2Flinhzweixintest.sinaapp.com%2FoauthServlet&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
+		btn33.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx16c644d1873b9073&redirect_uri=http%3A%2F%2F1.linhzweixintest.sinaapp.com%2FoauthServlet&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
 
 		ComplexButton btn1 = new ComplexButton();
 		btn1.setName("技术交流");

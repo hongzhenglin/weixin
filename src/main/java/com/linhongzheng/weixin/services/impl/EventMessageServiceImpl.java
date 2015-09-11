@@ -99,10 +99,6 @@ public class EventMessageServiceImpl extends AbstractWeChatService implements
 					.setContent("ITeye即创办于2003年8月的JavaEye,从最初的讨论Java技术为主的技术论坛,"
 							+ "已经逐渐发展成为涵盖整个软件开发领域的综合性网站。\n\nhttp://www.iteye.com");
 			respMessage = MessageUtil.messageToXml(textMessage);
-		} else if (eventKey.indexOf("oauth2") > 0) {
-			textMessage
-					.setContent("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx16c644d1873b9073&redirect_uri=http%3A%2F%2Flinhzweixintest.sinaapp.com%2FoauthServlet&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
-			respMessage = MessageUtil.messageToXml(textMessage);
 		}
 
 		return respMessage;
@@ -243,6 +239,24 @@ public class EventMessageServiceImpl extends AbstractWeChatService implements
 				+ requestMap.get("Latitude");
 		textResponseMessage.setContent(content);
 		log.info(content);
+		return MessageUtil.messageToXml(textResponseMessage);
+	}
+
+	@Override
+	public String handleTemplateSendJobFinishEvent(
+			Map<String, String> requestMap) {
+		String status = requestMap.get("Status");
+		String content = null;
+		if (status.equals("success")) {
+			content = "模板消息发送成功!";
+		} else if (status.equals("failed:user block")) {
+			content = "用户设置拒绝接收公众号消息";
+		} else if (status.equals("failed: system failed")) {
+			content = "发送失败（非用户拒绝）";
+		}
+		log.info(content);
+		TextResponseMessage textResponseMessage = createTextMessage(requestMap);
+		textResponseMessage.setContent(content);
 		return MessageUtil.messageToXml(textResponseMessage);
 	}
 

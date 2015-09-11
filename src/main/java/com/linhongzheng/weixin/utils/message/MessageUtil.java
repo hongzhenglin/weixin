@@ -6,9 +6,11 @@ import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,6 +27,8 @@ import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.VedioResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.VoiceResponseMessage;
+import com.linhongzheng.weixin.entity.message.template.TemplateMessage;
+import com.linhongzheng.weixin.entity.message.template.TemplateParam;
 import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.StringUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
@@ -103,6 +107,32 @@ public class MessageUtil {
 		xStream.alias("xml", NewsResponseMessage.class);
 		xStream.alias("item", Article.class);
 		return xStream.toXML(newsMessage);
+	}
+
+	/**
+	 * 测试模板消息功能，用户发“模板消息”字符串时，回复
+	 * 
+	 */
+	public static String encapTemplateMEssage(Map<String, String> requestMap) {
+		TemplateMessage templateMessage = new TemplateMessage();
+		if (!requestMap.isEmpty()) {
+
+			templateMessage.setTemplateId(requestMap.get("templateId"));
+			templateMessage.setToUser(requestMap.get("toUser"));
+			templateMessage.setTopColor(requestMap.get("color"));
+			templateMessage.setTopColor(requestMap.get("url"));
+			List<TemplateParam> templateParamList = new ArrayList<TemplateParam>();
+			Set<String> keys = requestMap.keySet();
+			for (String key : keys) {
+				TemplateParam param = new TemplateParam(key,
+						requestMap.get(key), requestMap.get("color"));
+				templateParamList.add(param);
+			}
+
+			templateMessage.setTemplateParamList(templateParamList);
+			return templateMessage.toJSON();
+		}
+		return null;
 	}
 
 	/**

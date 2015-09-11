@@ -11,5 +11,5 @@ public interface ICustomMessageService {
 
 	public abstract void updateHeadImage();
 
-	public abstract void sendCustomerMessage();
+	public abstract boolean sendCustomerMessage(String jsonMsg);
 }

@@ -95,6 +95,27 @@ public class URLConstants {
 
 	}
 
+	public static class TEMPLATE {
+
+		public static final String SET_INDUSTRY_URL = "https://api.weixin.qq.com/cgi-bin/template/api_set_industry?access_token=ACCESS_TOKEN";
+
+		public static final String GET_TEMPLATE_URL = "https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token=ACCESS_TOKEN";
+		// 发送模板消息
+		public static final String TEMPLATE_SEND_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN";
+
+	}
+
+	public static class MATERIAL {
+		// POST/FORM 新增临时素材
+		public static final String UPLOAD_TEMP_MEDIA_URL = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE";
+		// GET 获取临时素材
+		public static final String GET_TEMP_MEDIA_URL = "https://api.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID";
+
+		// 新增永久素材
+		public static final String ADD_NEW_MATERIAL_URL = "https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=ACCESS_TOKEN";
+
+	}
+
 	/**
 	 * 微信支付接口地址
 	 */
@@ -114,15 +135,14 @@ public class URLConstants {
 	public final static String SHORT_URL = "https://api.mch.weixin.qq.com/tools/shorturl";
 	// 接口调用上报接口(POST)
 	public final static String REPORT_URL = "https://api.mch.weixin.qq.com/payitil/report";
-	public static final String GET_MEDIA_URL = "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN";
-	public static final String UPLOAD_MEDIA_URL = "http://file.api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN";
+
 	public static final String JSAPI_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=ACCESS_TOKEN";
 
 	public static final String UPLOADNEWS_URL = "https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=ACCESS_TOKEN";
 	public static final String MASS_SENDALL_URL = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=ACCESS_TOKEN";
 	public static final String MASS_SEND_URL = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=ACCESS_TOKEN";
 	public static final String MASS_DELETE_URL = "https://api.weixin.qq.com//cgi-bin/message/mass/delete?access_token=ACCESS_TOKEN";
-	public static final String TEMPLATE_SEND_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN";
+
 	public static final String PAYFEEDBACK_URL = "https://api.weixin.qq.com/payfeedback/update";
 
 }

@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -147,7 +149,7 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 	 */
 	private String routeMessage(Map<String, String> requestMap) {
 		String respMessage = null;
-		log.info("微信转发的消息内容："+requestMap.toString());
+		log.info("微信转发的消息内容：" + requestMap.toString());
 		// 消息类型
 		String msgType = requestMap.get("MsgType");
 		switch (MSG_TYPE.valueOf(msgType.toUpperCase())) {
@@ -181,6 +183,35 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 			break;
 		}
 		return respMessage;
+	}
+
+	/**
+	 * 获取微信服务器IP地址 如果公众号基于安全等考虑，需要获知微信服务器的IP地址列表，以便进行相关限制，可以通过该接口获得微信服务器IP地址列表。
+	 * 
+	 * @param accessToken
+	 * @return
+	 */
+	public String getServerIP(String accessToken) {
+		String urlstr = "https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token="
+				+ accessToken + "";
+		try {
+			HttpURLConnection http = (HttpURLConnection) new URL(urlstr)
+					.openConnection();
+			http.setRequestMethod("GET");
+			http.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+			http.setDoInput(true);
+			System.setProperty("sun.net.client.defaultConnectTimeout", "30000");// 连接超时30秒
+			System.setProperty("sun.net.client.defaultReadTimeout", "30000");// 读取超时30秒
+			InputStream is = http.getInputStream();
+			int size = is.available();
+			byte[] buf = new byte[size];
+			is.read(buf);
+			resp = new String(buf, "UTF-8");
+		} catch (Exception e) {
+			log.error(e);
+		}
+		return resp;
 	}
 
 	public IMessageService getMessageService() {

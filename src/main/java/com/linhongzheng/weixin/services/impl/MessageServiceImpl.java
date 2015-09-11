@@ -2,6 +2,7 @@ package com.linhongzheng.weixin.services.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,25 +12,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.dao.BaseDAO;
 import com.linhongzheng.weixin.entity.message.MSG_TYPE;
 import com.linhongzheng.weixin.entity.message.event.EVENT_TYPE;
 import com.linhongzheng.weixin.entity.message.response.Article;
-import com.linhongzheng.weixin.entity.message.response.ImageResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.Music;
 import com.linhongzheng.weixin.entity.message.response.MusicResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
-import com.linhongzheng.weixin.entity.message.response.VoiceResponseMessage;
+import com.linhongzheng.weixin.entity.user.WeiXinGroup;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
+import com.linhongzheng.weixin.services.IAccessTokenService;
 import com.linhongzheng.weixin.services.IBaiduService;
 import com.linhongzheng.weixin.services.IEventMessageService;
 import com.linhongzheng.weixin.services.IMessageService;
 import com.linhongzheng.weixin.services.ITodayInHistoryService;
 import com.linhongzheng.weixin.services.IUserService;
+import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.ConfigUtil;
 import com.linhongzheng.weixin.utils.DateUtil;
 import com.linhongzheng.weixin.utils.StringUtil;
+import com.linhongzheng.weixin.utils.URLConstants;
 import com.linhongzheng.weixin.utils.face.FacePlusPlusUtil;
 import com.linhongzheng.weixin.utils.message.MessageUtil;
 
@@ -39,7 +44,7 @@ import com.linhongzheng.weixin.utils.message.MessageUtil;
 @Service("messageService")
 public class MessageServiceImpl extends AbstractWeChatService implements
 		IMessageService {
-	private static final Logger LOGGER = LoggerFactory
+	private static final Logger log = LoggerFactory
 			.getLogger(MessageServiceImpl.class);
 	@Autowired
 	IEventMessageService eventMessageService;
@@ -52,6 +57,9 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 
 	@Autowired
 	ITodayInHistoryService todayInHistoryService;
+
+	@Autowired
+	IAccessTokenService accessTokenService;
 
 	/**
 	 * @param requestMap
@@ -105,7 +113,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		// 接收用户发送的文本消息内容
 		String content = requestMap.get("Content").trim();
 		// TODO 可以根据数据库的配置做非全文匹配
-		LOGGER.info("文本消息内容：" + content);
+		log.info("文本消息内容：" + content);
 		saveTextMessage(requestMap);
 
 		if (content.equals("签到")) {
@@ -131,12 +139,16 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 				textResponseMessage.setContent(baiduService.translate(keyWord));
 			}
 
+		} else if (content.equals("模板消息")) {
+			String data = createTemplateMessage(requestMap);
+			sendTemplateMEssage(data);
+			return null;
 		} else {
 			// 文本消息内容
 			String respContent = null;
 			// 如果以“歌曲”2个字开头
 			if (content.startsWith("歌曲")) {
-				LOGGER.info("百度歌曲搜索API");
+				log.info("百度歌曲搜索API");
 				// 将歌曲2个字及歌曲后面的+、空格、-等特殊符号去掉
 				String keyWord = content.replaceAll("^歌曲[\\+ ~!#@%^-_=]?", "");
 				// 如果歌曲名称为空
@@ -150,12 +162,12 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 					String musicAuthor = "";
 					if (2 == kwArr.length)
 						musicAuthor = kwArr[1];
-					LOGGER.info("百度歌曲搜索,歌曲名称" + musicTitle + "  演唱者："
+					log.info("百度歌曲搜索,歌曲名称" + musicTitle + "  演唱者："
 							+ musicAuthor);
 					// 搜索音乐
 					Music music = baiduService.searchMusic(musicTitle,
 							musicAuthor);
-					LOGGER.info("百度歌曲搜索结果：" + music.toString());
+					log.info("百度歌曲搜索结果：" + music.toString());
 					// 未搜索到音乐
 					if (null == music) {
 						respContent = "对不起，没有找到你想听的歌曲<" + musicTitle + ">。";
@@ -164,7 +176,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 								requestMap, music);
 
 						respXml = MessageUtil.messageToXml(musicMessage);
-						LOGGER.info("百度歌曲搜索返回," + respXml);
+						log.info("百度歌曲搜索返回," + respXml);
 						return respXml;
 					}
 				}
@@ -235,7 +247,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 				fromUserName, toUserName);
 		String content = "您目前所在的地理位置是：" + requestMap.get("Label");
 		textResponseMessage.setContent(content);
-		LOGGER.info(content);
+		log.info(content);
 		return MessageUtil.messageToXml(textResponseMessage);
 	}
 
@@ -247,40 +259,43 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 	@Override
 	public String handleEventMessage(Map<String, String> requestMap) {
 		String responStr = null;
-		String eventType = requestMap.get("Event");
+		String event = requestMap.get("Event");
 		// 订阅
-		if (eventType.equals(EVENT_TYPE.subscribe.toString())) {
+		if (event.equals(EVENT_TYPE.subscribe.toString())) {
 			responStr = eventMessageService.handleSubscribeEvent(requestMap);
 		}
 
-		else if (eventType.equals(EVENT_TYPE.unsubscribe.toString())) {// 取消订阅
+		else if (event.equals(EVENT_TYPE.unsubscribe.toString())) {// 取消订阅
 			// 取消订阅后用户再收不到公众号发送的消息，因此不需要回复消息
 			responStr = eventMessageService.handleUbsubscribeEvent(requestMap);
-		} else if (eventType.equals(EVENT_TYPE.SCAN.toString())) { // 用户已关注时的事件推送
+		} else if (event.equals(EVENT_TYPE.SCAN.toString())) { // 用户已关注时的事件推送
 			responStr = eventMessageService.handleScanEvent(requestMap);
-		} else if (eventType.equals(EVENT_TYPE.LOCATION.toString())) { // 上报地理位置事件
+		} else if (event.equals(EVENT_TYPE.LOCATION.toString())) { // 上报地理位置事件
 			responStr = eventMessageService.handleLocationEvent(requestMap);
 		}
 		// 自定义菜单点击事件
-		else if (eventType.equals(EVENT_TYPE.CLICK.toString())) {
+		else if (event.equals(EVENT_TYPE.CLICK.toString())) {
 			responStr = eventMessageService.handleClickEvent(requestMap);
-		} else if (eventType.equals(EVENT_TYPE.VIEW.toString())) {
+		} else if (event.equals(EVENT_TYPE.VIEW.toString())) {
 			responStr = eventMessageService.handleViewEvent(requestMap);
-		} else if (eventType.equals(EVENT_TYPE.scancode_push.toString())) {
+		} else if (event.equals(EVENT_TYPE.scancode_push.toString())) {
 			responStr = eventMessageService.handleScancodePushEvent(requestMap);
-		} else if (eventType.equals(EVENT_TYPE.scancode_waitmsg.toString())) {
+		} else if (event.equals(EVENT_TYPE.scancode_waitmsg.toString())) {
 			responStr = eventMessageService
 					.handleScancodeWaitmsgEvent(requestMap);
-		} else if (eventType.equals(EVENT_TYPE.pic_sysphoto.toString())) {
+		} else if (event.equals(EVENT_TYPE.pic_sysphoto.toString())) {
 			responStr = eventMessageService.handlePicSysphotoEvent(requestMap);
-		} else if (eventType.equals(EVENT_TYPE.pic_photo_or_album.toString())) {
+		} else if (event.equals(EVENT_TYPE.pic_photo_or_album.toString())) {
 			responStr = eventMessageService
 					.handlePicPhotoOrAlbumEvent(requestMap);
-		} else if (eventType.equals(EVENT_TYPE.pic_weixin.toString())) {
+		} else if (event.equals(EVENT_TYPE.pic_weixin.toString())) {
 			responStr = eventMessageService.handlePicWeixinEvent(requestMap);
-		} else if (eventType.equals(EVENT_TYPE.location_select.toString())) {
+		} else if (event.equals(EVENT_TYPE.location_select.toString())) {
 			responStr = eventMessageService
 					.handleLocationSelectEvent(requestMap);
+		} else if (event.equals(EVENT_TYPE.TEMPLATESENDJOBFINISH.toString())) {
+			responStr = eventMessageService
+					.handleTemplateSendJobFinishEvent(requestMap);
 		}
 		return responStr;
 	}
@@ -331,7 +346,6 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		return respMessage;
 	}
 
-	
 	private String queryWeather(Map<String, String> requestMap, String content) {
 		String cityName = content.trim().replace("天气", "");
 		NewsResponseMessage newsMessage = createNewsMessage(requestMap);
@@ -389,6 +403,55 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 
 	}
 
+	/**
+	 * 可以改成从数据库或者模板的值
+	 * 
+	 * @param requestMap
+	 * @return
+	 */
+	public String createTemplateMessage(Map<String, String> requestMap) {
+		Map<String, String> templateMap = new HashMap<String, String>();
+		templateMap.put("templateId",
+				"_EF4B1GzEWVPBL49fcYRsu1KcqwgSgBGrdIfWrntGxw");
+		templateMap.put("toUser", requestMap.get("FromUserName"));
+		templateMap.put("color", "#FF0000");
+		templateMap
+				.put("url", "http://1.linhzweixintest.sinaapp.com/index.jsp");
+		templateMap.put("first", "今日签到信息");
+		templateMap.put("keyword1", "高级工程师");
+		templateMap.put("keyword2", "侨景大厦");
+		templateMap.put("keyword3", "2015-09-11 8:00:00");
+		templateMap.put("keyword4", "2015-09-11 12:00:00");
+		templateMap.put("remark", "如果有問題，请联系HR！");
+
+		return MessageUtil.encapTemplateMEssage(templateMap);
+
+	}
+	
+	@Override
+	public void sendTemplateMEssage(String data) {
+		String at = null;
+		try {
+			at = accessTokenService.getAccessToken();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (null != at) {
+			String requestUrl = URLConstants.TEMPLATE.TEMPLATE_SEND_URL
+					.replace("ACCESS_TOKEN", at);
+
+			String jsonResp = CommonUtil.httpsRequest(requestUrl, "POST", data);
+			if (jsonResp != null) {
+				JSONObject jsonObject = JSON.parseObject(jsonResp);
+				int errcode = jsonObject.getIntValue("errcode");
+				if (errcode != 0) {
+					log.error("发送模板消息失败：" + jsonObject.getString("errmsg"));
+				}
+			}
+		}
+	}
+
 	public IEventMessageService getEventMessageService() {
 		return eventMessageService;
 	}
@@ -422,8 +485,17 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		this.baiduService = baiduService;
 	}
 
+	public IAccessTokenService getAccessTokenService() {
+		return accessTokenService;
+	}
+
+	public void setAccessTokenService(IAccessTokenService accessTokenService) {
+		this.accessTokenService = accessTokenService;
+	}
+
 	public static void main(String[] args) {
 		String content = "歌曲@吻别@张学友";
 		System.out.println(content.replaceAll("^歌曲[\\+ ~!#@%^-_=]?", ""));
 	}
+
 }
