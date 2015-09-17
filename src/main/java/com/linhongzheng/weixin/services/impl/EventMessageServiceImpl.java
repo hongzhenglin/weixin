@@ -260,6 +260,12 @@ public class EventMessageServiceImpl extends AbstractWeChatService implements
 		return MessageUtil.messageToXml(textResponseMessage);
 	}
 
+	@Override
+	public String handleMassSendJobFinishEvent(Map<String, String> requestMap) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public IUserService getUserService() {
 		return userService;
 	}

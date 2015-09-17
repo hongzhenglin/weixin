@@ -29,4 +29,10 @@ public class WeiXinMedia {
 		this.createdAt = createdAt;
 	}
 
+	@Override
+	public String toString() {
+		return "WeiXinMedia [type=" + type + ", mediaId=" + mediaId
+				+ ", createdAt=" + createdAt + "]";
+	}
+
 }

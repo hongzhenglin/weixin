@@ -130,7 +130,6 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 			textResponseMessage.setContent(todayInHistoryService
 					.getTodayInHistoryInfo());
 		} else if (content.startsWith("翻译")) {
-
 			String keyWord = content.replaceAll("^翻译", "").trim();
 			if ("".equals(keyWord)) {
 				textResponseMessage
@@ -143,59 +142,55 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 			String data = createTemplateMessage(requestMap);
 			sendTemplateMEssage(data);
 			return null;
-		} else {
-			// 文本消息内容
-			String respContent = null;
-			// 如果以“歌曲”2个字开头
-			if (content.startsWith("歌曲")) {
-				log.info("百度歌曲搜索API");
-				// 将歌曲2个字及歌曲后面的+、空格、-等特殊符号去掉
-				String keyWord = content.replaceAll("^歌曲[\\+ ~!#@%^-_=]?", "");
-				// 如果歌曲名称为空
-				if ("".equals(keyWord)) {
-					respContent = baiduService.getMusicUsage();
-				} else {
-					String[] kwArr = keyWord.split("@");
-					// 歌曲名称
-					String musicTitle = kwArr[0];
-					// 演唱者默认为空
-					String musicAuthor = "";
-					if (2 == kwArr.length)
-						musicAuthor = kwArr[1];
-					log.info("百度歌曲搜索,歌曲名称" + musicTitle + "  演唱者："
-							+ musicAuthor);
-					// 搜索音乐
-					Music music = baiduService.searchMusic(musicTitle,
-							musicAuthor);
-					log.info("百度歌曲搜索结果：" + music.toString());
-					// 未搜索到音乐
-					if (null == music) {
-						respContent = "对不起，没有找到你想听的歌曲<" + musicTitle + ">。";
-					} else {
-						MusicResponseMessage musicMessage = createMusicMessage(
-								requestMap, music);
-
-						respXml = MessageUtil.messageToXml(musicMessage);
-						log.info("百度歌曲搜索返回," + respXml);
-						return respXml;
-					}
-				}
-				// 未搜索到音乐时返回使用指南
-				if (null == respXml) {
-					if (null == respContent)
-						respContent = baiduService.getMusicUsage();
-					textResponseMessage.setContent(respContent);
-				}
-			}
+		} else if (content.startsWith("歌曲")) {
+			String respContent = baiduMusic(requestMap, content);
+			textResponseMessage.setContent(respContent);
+		} else if (content.startsWith("人工服务")) { // 多客服，该公众号用户后续所有的消息交互，都会与同一个客服使用同一个会话，直到会话断开
+			return MessageUtil.messageToXml(createCustomMessage(requestMap));
 		}
 
-		// 如果返回消息为空，则转到客服消息接口
-		if (StringUtil.isEmpty(textResponseMessage.getContent())) {
-			textResponseMessage.setMsgType(MSG_TYPE.TRANSFER_CUSTOMER_SERVICE
-					.toString().toLowerCase());
-		}
 		respXml = MessageUtil.messageToXml(textResponseMessage);
 		return respXml;
+	}
+
+	private String baiduMusic(Map<String, String> requestMap, String content) {
+		// 文本消息内容
+		String respContent = null;
+		// 如果以“歌曲”2个字开头
+
+		log.info("百度歌曲搜索API");
+		// 将歌曲2个字及歌曲后面的+、空格、-等特殊符号去掉
+		String keyWord = content.replaceAll("^歌曲[\\+ ~!#@%^-_=]?", "");
+		// 如果歌曲名称为空
+		if ("".equals(keyWord)) {
+			respContent = baiduService.getMusicUsage();
+		} else {
+			String[] kwArr = keyWord.split("@");
+			// 歌曲名称
+			String musicTitle = kwArr[0];
+			// 演唱者默认为空
+			String musicAuthor = "";
+			if (2 == kwArr.length)
+				musicAuthor = kwArr[1];
+			log.info("百度歌曲搜索,歌曲名称" + musicTitle + "  演唱者：" + musicAuthor);
+			// 搜索音乐
+			Music music = baiduService.searchMusic(musicTitle, musicAuthor);
+			log.info("百度歌曲搜索结果：" + music.toString());
+			// 未搜索到音乐
+			if (null == music) {
+				respContent = "对不起，没有找到你想听的歌曲<" + musicTitle + ">。";
+			} else {
+				MusicResponseMessage musicMessage = createMusicMessage(
+						requestMap, music);
+				respContent = MessageUtil.messageToXml(musicMessage);
+				log.info("百度歌曲搜索返回," + respContent);
+			}
+		}
+		// 未搜索到音乐时返回使用指南
+		if (null == respContent) {
+			respContent = baiduService.getMusicUsage();
+		}
+		return respContent;
 	}
 
 	/**
@@ -296,6 +291,9 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		} else if (event.equals(EVENT_TYPE.TEMPLATESENDJOBFINISH.toString())) {
 			responStr = eventMessageService
 					.handleTemplateSendJobFinishEvent(requestMap);
+		} else if (event.equals(EVENT_TYPE.MASSSENDJOBFINISH.toString())) {
+			responStr = eventMessageService
+					.handleMassSendJobFinishEvent(requestMap);
 		}
 		return responStr;
 	}
@@ -427,7 +425,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		return MessageUtil.encapTemplateMEssage(templateMap);
 
 	}
-	
+
 	@Override
 	public void sendTemplateMEssage(String data) {
 		String at = null;

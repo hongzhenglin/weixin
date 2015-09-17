@@ -10,13 +10,46 @@ import org.junit.Test;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.linhongzheng.weixin.entity.message.response.CustomResponseMessage;
+import com.linhongzheng.weixin.entity.message.response.KfAccoutCustomResponseMessage;
+import com.linhongzheng.weixin.entity.message.response.TransInfo;
 import com.linhongzheng.weixin.entity.user.WeiXinGroup;
 import com.linhongzheng.weixin.entity.user.WeiXinUserInfoList;
 import com.linhongzheng.weixin.utils.JSONUtil;
+import com.linhongzheng.weixin.utils.XStreamUtil;
+import com.thoughtworks.xstream.XStream;
 
 public class JSONTest extends TestCase {
+	@Test
+	public void testCustomResponse() {
+		KfAccoutCustomResponseMessage customResponse = new KfAccoutCustomResponseMessage();
+		customResponse.setToUserName("touser");
+		customResponse.setFromUserName("fromuser");
+		customResponse.setCreateTime(1399197672);
+		customResponse.setMsgType("transfer_customer_service");
+		TransInfo transInfo = new TransInfo("test1@test");
+	 
+		customResponse.setTransInfo(transInfo);
+		XStream xStream = XStreamUtil.init(true);
+		xStream.alias("xml", KfAccoutCustomResponseMessage.class);
+
+		System.out.println(xStream.toXML(customResponse));
+	}
 
 	@Test
+	public void testCustomResponse2() {
+		CustomResponseMessage customResponse = new CustomResponseMessage();
+		customResponse.setToUserName("touser");
+		customResponse.setFromUserName("fromuser");
+		customResponse.setCreateTime(1399197672);
+		customResponse.setMsgType("transfer_customer_service");
+
+		XStream xStream = XStreamUtil.init(true);
+		xStream.alias("xml", CustomResponseMessage.class);
+
+		System.out.println(xStream.toXML(customResponse));
+	}
+
 	public void testUserListData() {
 		String data = " { \"total\":23000, \"count\":10000, \"data\":{ \"openid\":[ \"OPENID10001\", \"OPENID10002\", \"OPENID20000\" ] }, \"next_openid\":\"OPENID20000\" }";
 		JSONObject jsonObject = JSON.parseObject(data);
@@ -26,7 +59,7 @@ public class JSONTest extends TestCase {
 				String.class));
 	}
 
-	@Test
+	// @Test
 	public void testConcatJsonData() {
 		List<String> openidList = new ArrayList<String>();
 		openidList.add("oDF3iYx0ro3_7jD4HFRDfrjdCM58");
@@ -43,7 +76,7 @@ public class JSONTest extends TestCase {
 
 	}
 
-	@Test
+	// @Test
 	public void testJsonToList() {
 		String userInfoListStr = "{ \"user_info_list\": [ { \"subscribe\": 1, \"openid\": \"otvxTs4dckWG7imySrJd6jSi0CWE\", "
 				+ "\"nickname\": \"iWithery\", \"sex\": 1, \"language\": \"zh_CN\", \"city\": \"Jieyang\", \"province\": \"Guangdong\","
@@ -56,7 +89,7 @@ public class JSONTest extends TestCase {
 		// System.out.println(list.getUser_info_list().get(0).toString());
 	}
 
-	@Test
+	// @Test
 	public void testJsonArray() {
 		String jsonStr = "{\"groups\":[{\"id\":0,\"name\":\"未分组\",\"count\":72596},{\"id\":1,\"name\":\"黑名单\",\"count\":36},"
 				+ "{\"id\":2,\"name\":\"星标组\",\"count\":8}, {\"id\":104,\"name\":\"华东媒\",\"count\":4}]}";

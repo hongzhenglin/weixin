@@ -21,7 +21,9 @@ import org.dom4j.io.SAXReader;
 
 import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.entity.message.response.Article;
+import com.linhongzheng.weixin.entity.message.response.CustomResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.ImageResponseMessage;
+import com.linhongzheng.weixin.entity.message.response.KfAccoutCustomResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.MusicResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
@@ -107,6 +109,19 @@ public class MessageUtil {
 		xStream.alias("xml", NewsResponseMessage.class);
 		xStream.alias("item", Article.class);
 		return xStream.toXML(newsMessage);
+	}
+
+	public static String messageToXml(KfAccoutCustomResponseMessage message) {
+		XStream xStream = XStreamUtil.init(true);
+		xStream.alias("xml", KfAccoutCustomResponseMessage.class);
+		return xStream.toXML(message);
+	}
+
+	public static String messageToXml(CustomResponseMessage customMessage) {
+		XStream xStream = XStreamUtil.init(true);
+		xStream.alias("xml", CustomResponseMessage.class);
+
+		return xStream.toXML(customMessage);
 	}
 
 	/**

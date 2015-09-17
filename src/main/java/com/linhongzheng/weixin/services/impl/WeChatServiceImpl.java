@@ -4,9 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,11 +19,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.entity.message.MSG_TYPE;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
+import com.linhongzheng.weixin.services.IAccessTokenService;
 import com.linhongzheng.weixin.services.IMessageService;
 import com.linhongzheng.weixin.services.IWeChatService;
+import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.SignUtil;
+import com.linhongzheng.weixin.utils.URLConstants;
 import com.linhongzheng.weixin.utils.message.MessageUtil;
 import com.qq.weixin.mp.aes.AesException;
 import com.qq.weixin.mp.aes.WXBizMsgCrypt;
@@ -37,6 +43,8 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 
 	private static final Logger log = LoggerFactory
 			.getLogger(WeChatServiceImpl.class);
+	@Autowired
+	IAccessTokenService accessTokenService;
 
 	@Autowired
 	IMessageService messageService;
@@ -55,6 +63,39 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 		Map<String, String> requestMap = parseCryptXml(request);
 		String replyMsg = routeMessage(requestMap);
 		return postHandler(request, replyMsg);
+	}
+
+	/**
+	 * 获取微信服务器IP地址 如果公众号基于安全等考虑，需要获知微信服务器的IP地址列表，以便进行相关限制，可以通过该接口获得微信服务器IP地址列表。
+	 * 
+	 * @param accessToken
+	 * @return
+	 */
+	@Override
+	public List<String> getServerIP(String accessToken) {
+
+		
+		List<String> ipList = new ArrayList<String>();
+		try {
+			if (accessToken == null) {
+				accessToken = accessTokenService.getAccessToken();
+			}
+			String requestUrl = URLConstants.GET_WEIXINIP_URL.replace(
+					"ACCESS_TOKEN", accessToken);
+			String jsonStr = CommonUtil.httpsRequest(requestUrl, "GET", null);
+			JSONObject jsonObject = JSON.parseObject(jsonStr);
+			int errcode = jsonObject.getIntValue("errcode");
+
+			if (errcode != 0) {
+				log.error("获取微信服务器IP地址失败：" + jsonObject.getString("errmsg"));
+			} else {
+				ipList = JSONArray.parseArray(jsonObject.getString("ip_list"),
+						String.class);
+			}
+		} catch (Exception e) {
+
+		}
+		return ipList;
 	}
 
 	private Map<String, String> parseRawXml(HttpServletRequest request)
@@ -185,41 +226,20 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 		return respMessage;
 	}
 
-	/**
-	 * 获取微信服务器IP地址 如果公众号基于安全等考虑，需要获知微信服务器的IP地址列表，以便进行相关限制，可以通过该接口获得微信服务器IP地址列表。
-	 * 
-	 * @param accessToken
-	 * @return
-	 */
-	public String getServerIP(String accessToken) {
-		String urlstr = "https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token="
-				+ accessToken + "";
-		try {
-			HttpURLConnection http = (HttpURLConnection) new URL(urlstr)
-					.openConnection();
-			http.setRequestMethod("GET");
-			http.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded");
-			http.setDoInput(true);
-			System.setProperty("sun.net.client.defaultConnectTimeout", "30000");// 连接超时30秒
-			System.setProperty("sun.net.client.defaultReadTimeout", "30000");// 读取超时30秒
-			InputStream is = http.getInputStream();
-			int size = is.available();
-			byte[] buf = new byte[size];
-			is.read(buf);
-			resp = new String(buf, "UTF-8");
-		} catch (Exception e) {
-			log.error(e);
-		}
-		return resp;
-	}
-
 	public IMessageService getMessageService() {
 		return messageService;
 	}
 
 	public void setMessageService(IMessageService messageService) {
 		this.messageService = messageService;
+	}
+
+	public IAccessTokenService getAccessTokenService() {
+		return accessTokenService;
+	}
+
+	public void setAccessTokenService(IAccessTokenService accessTokenService) {
+		this.accessTokenService = accessTokenService;
 	}
 
 }

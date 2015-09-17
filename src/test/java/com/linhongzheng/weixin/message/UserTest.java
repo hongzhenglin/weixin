@@ -21,14 +21,14 @@ public class UserTest extends AbstractJUnit4SpringContextTests {
 	IUserService userService;
 	private static final String openId = "o8cS6uEhPb-OVPjNVDCfx1KPw5nE";
 
-	@Test
+//	@Test
 	public void testGetUserInfo() {
 
 		System.out.println(userService.getUserInfo(openId));
 
 	}
 
-	@Test
+	//@Test
 	public void testBatchGetUserInfos() {
 		String[] openIds = new String[] { openId };
 		System.out.println(userService.batchGetUserInfos(openIds));
@@ -39,7 +39,7 @@ public class UserTest extends AbstractJUnit4SpringContextTests {
 		userService.createGroup("公司员工");
 	}
 
-	@Test
+	//@Test
 	public void testUpdateGroup() {
 		userService.updateGroup(100, "同事");
 	}
@@ -55,7 +55,7 @@ public class UserTest extends AbstractJUnit4SpringContextTests {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testUpdateUserGroup() {
 		userService.updateMemberGroup(openId, 100);
 	}

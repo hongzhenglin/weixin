@@ -1,8 +1,12 @@
 package com.linhongzheng.weixin.utils;
 
 public class URLConstants {
+
 	// 获取token接口(GET)
 	public static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
+
+	// 获取微信服务器IP地址列表，请求方式: GET
+	public static final String GET_WEIXINIP_URL = "https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=ACCESS_TOKEN";
 
 	public static class QRCODE {
 		// 创建临时二维码ticket
@@ -39,6 +43,17 @@ public class URLConstants {
 
 		// 获取用户列表 GET
 		public final static String BATCHGET_USER_URL = "https://api.weixin.qq.com/cgi-bin/user/get?access_token=ACCESS_TOKEN&next_openid=NEXT_OPENID";
+	}
+
+	public static class GROUP {
+		// 根据分组进行群发
+		public final static String GROUP_MESSAGE_SEND_URL = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=ACCESS_TOKEN";
+		// 根据OpenID列表群发
+		public final static String OPENID_MESSAGE_SEND_URL = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=ACCESS_TOKEN";
+		// 删除群发
+		public final static String DELETE_MESSAGE_URL = "https://api.weixin.qq.com/cgi-bin/message/mass/delete?access_token=ACCESS_TOKEN";
+		// 查询群发消息发送状态
+		public final static String MESSAGE_STATUS_URL = "https://api.weixin.qq.com/cgi-bin/message/mass/get?access_token=ACCESS_TOKEN";
 	}
 
 	public static class OAUTH {

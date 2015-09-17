@@ -52,6 +52,9 @@ public class CommonUtil {
 	public static String httpsRequest(String requestUrl, String requestMethod,
 			String outputStr) {
 		try {
+			// System.setProperty("javax.net.debug","ssl,handshake");
+			// 设置SSL版本
+			System.setProperty("https.protocols", "TLSv1");
 			requestMethod = requestMethod.toUpperCase();
 			// 创建SSLContext对象，并使用我们指定的信任管理器初始化
 			TrustManager[] tm = { new MyX509TrustManager() };
@@ -110,5 +113,26 @@ public class CommonUtil {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	/**
+	 * 
+	 * @param contentType
+	 * @return
+	 */
+	public static String getFileExt(String contentType) {
+		String fileExt = "";
+		if ("image/jpeg".equals(contentType)) {
+			fileExt = ".jpg";
+		} else if ("audio/mpeg".equals(contentType)) {
+			fileExt = ".mp3";
+		} else if ("audio/amr".equals(contentType)) {
+			fileExt = ".amr";
+		} else if ("video/mp4".equals(contentType)) {
+			fileExt = ".mp4";
+		} else if ("video/mpej4".equals(contentType)) {
+			fileExt = ".mp4";
+		}
+		return fileExt;
 	}
 }

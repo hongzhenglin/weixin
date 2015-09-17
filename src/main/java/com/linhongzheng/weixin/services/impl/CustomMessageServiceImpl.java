@@ -71,11 +71,11 @@ public class CustomMessageServiceImpl extends AbstractWeChatService implements
 				JSONObject jsonObject = JSON.parseObject(jsonResp);
 				int errcode = jsonObject.getIntValue("errcode");
 				if (errcode != 0) {
-					log.error("发送模板消息失败：errcode:{} errmsg:{}", errcode,
+					log.error("发送客服消息失败：errcode:{} errmsg:{}", errcode,
 							jsonObject.getString("errmsg"));
 				} else {
 					result = true;
-					log.info("发送模板消息成功：errcode:{} errmsg:{}", errcode,
+					log.info("发送客服消息成功：errcode:{} errmsg:{}", errcode,
 							jsonObject.getString("errmsg"));
 				}
 			}

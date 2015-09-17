@@ -1,12 +1,7 @@
 package com.linhongzheng.weixin.services;
 
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,15 +10,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
-import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.entity.message.MSG_TYPE;
+import com.linhongzheng.weixin.entity.message.response.CustomResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.ImageResponseMessage;
+import com.linhongzheng.weixin.entity.message.response.KfAccoutCustomResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.Music;
 import com.linhongzheng.weixin.entity.message.response.MusicResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
+import com.linhongzheng.weixin.entity.message.response.TransInfo;
 import com.linhongzheng.weixin.entity.message.response.VoiceResponseMessage;
-import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.ConfigUtil;
 import com.linhongzheng.weixin.utils.SignUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
@@ -46,24 +42,6 @@ public abstract class AbstractWeChatService {
 	}
 
 	/**
-	 * 支付反馈
-	 *
-	 * @param openid
-	 * @param feedbackid
-	 * @return
-	 * @throws Exception
-	 */
-	/*
-	 * public static boolean payfeedback(String openid, String feedbackid)
-	 * throws Exception { Map<String, String> map = new HashMap<String,
-	 * String>(); String accessToken = getAccessToken(); map.put("access_token",
-	 * accessToken); map.put("openid", openid); map.put("feedbackid",
-	 * feedbackid); String jsonStr = HttpKit.get(PAYFEEDBACK_URL, map);
-	 * Map<String, Object> jsonMap = JSONObject.parseObject(jsonStr); return
-	 * "0".equals(jsonMap.get("errcode").toString()); }
-	 */
-
-	/**
 	 * 签名检查
 	 *
 	 * @param signature
@@ -76,132 +54,6 @@ public abstract class AbstractWeChatService {
 		return SignUtil.checkSignature(signature, timestamp, nonce);
 	}
 
-	/**
-	 * 根据接收到用户消息进行处理
-	 *
-	 * @param responseInputString
-	 *            微信发送过来的xml消息体
-	 * @return
-	 */
-	/*
-	 * public static String processing(String responseInputString) { InMessage
-	 * inMessage = parsingInMessage(responseInputString); OutMessage oms = null;
-	 * // 加载处理器 if (messageProcessingHandlerClazz == null) { //
-	 * 获取自定消息处理器，如果自定义处理器则使用默认处理器。 String handler =
-	 * ConfKit.get("MessageProcessingHandlerImpl"); handler = handler == null ?
-	 * DEFAULT_HANDLER : handler; try { messageProcessingHandlerClazz =
-	 * Thread.currentThread().getContextClassLoader().loadClass(handler); }
-	 * catch (Exception e) { throw new
-	 * RuntimeException("messageProcessingHandler Load Error！"); } } String xml
-	 * = ""; try { MessageProcessingHandler messageProcessingHandler =
-	 * (MessageProcessingHandler) messageProcessingHandlerClazz.newInstance();
-	 * //取得消息类型 String type = inMessage.getMsgType(); Method getOutMessage =
-	 * messageProcessingHandler.getClass().getMethod("getOutMessage"); Method
-	 * alMt = messageProcessingHandler.getClass().getMethod("allType",
-	 * InMessage.class); Method mt =
-	 * messageProcessingHandler.getClass().getMethod(type + "TypeMsg",
-	 * InMessage.class);
-	 * 
-	 * alMt.invoke(messageProcessingHandler, inMessage);
-	 * 
-	 * if (mt != null) { mt.invoke(messageProcessingHandler, inMessage); }
-	 * 
-	 * Object obj = getOutMessage.invoke(messageProcessingHandler); if (obj !=
-	 * null) { oms = (OutMessage) obj; } //调用事后处理 try { Method aftMt =
-	 * messageProcessingHandler.getClass().getMethod("afterProcess",
-	 * InMessage.class, OutMessage.class);
-	 * aftMt.invoke(messageProcessingHandler, inMessage, oms); } catch
-	 * (Exception e) { }
-	 * 
-	 * obj = getOutMessage.invoke(messageProcessingHandler); if (obj != null) {
-	 * oms = (OutMessage) obj; setMsgInfo(oms, inMessage); } } catch (Exception
-	 * e) { throw new RuntimeException(e); } if (oms != null) { //
-	 * 把发送发送对象转换为xml输出 XStream xs = XStreamFactory.init(true); xs.alias("xml",
-	 * oms.getClass()); xs.alias("item", Articles.class); xml = xs.toXML(oms); }
-	 * return xml; }
-	 */
-	/**
-	 * 设置发送消息体
-	 *
-	 * @param oms
-	 * @param msg
-	 * @throws Exception
-	 */
-	/*
-	 * private static void setMsgInfo(OutMessage oms, InMessage msg) throws
-	 * Exception { if (oms != null) { Class<?> outMsg =
-	 * oms.getClass().getSuperclass(); Field CreateTime =
-	 * outMsg.getDeclaredField("CreateTime"); Field ToUserName =
-	 * outMsg.getDeclaredField("ToUserName"); Field FromUserName =
-	 * outMsg.getDeclaredField("FromUserName");
-	 * 
-	 * ToUserName.setAccessible(true); CreateTime.setAccessible(true);
-	 * FromUserName.setAccessible(true);
-	 * 
-	 * CreateTime.set(oms, new Date().getTime()); ToUserName.set(oms,
-	 * msg.getFromUserName()); FromUserName.set(oms, msg.getToUserName()); } }
-	 */
-
-	/**
-	 * 消息体转换
-	 *
-	 * @param responseInputString
-	 * @return
-	 */
-	/*
-	 * private static InMessage parsingInMessage(String responseInputString) {
-	 * //转换微信post过来的xml内容 XStream xs = XStreamFactory.init(false);
-	 * xs.ignoreUnknownElements(); xs.alias("xml", InMessage.class); InMessage
-	 * msg = (InMessage) xs.fromXML(responseInputString); return msg; }
-	 */
-
-	/**
-	 * 获取媒体资源
-	 *
-	 * @param accessToken
-	 * @param mediaId
-	 * @return
-	 * @throws java.io.IOException
-	 * @throws InterruptedException
-	 * @throws java.util.concurrent.ExecutionException
-	 */
-	/*
-	 * public static Attachment getMedia(String accessToken, String mediaId)
-	 * throws IOException, ExecutionException, InterruptedException { String url
-	 * = GET_MEDIA_URL + accessToken + "&media_id=" + mediaId; return
-	 * HttpKit.download(url); }
-	 */
-
-	/**
-	 * 获得jsapi_ticket（有效期7200秒)
-	 *
-	 * @param accessToken
-	 * @return
-	 * @throws InterruptedException
-	 * @throws ExecutionException
-	 * @throws NoSuchAlgorithmException
-	 * @throws KeyManagementException
-	 * @throws IOException
-	 * @throws NoSuchProviderException
-	 */
-	public static JSONObject getTicket(String accessToken) throws Exception,
-			NoSuchProviderException {
-		String jsonStr = CommonUtil.httpsRequest(
-				URLConstants.JSAPI_TICKET.concat(accessToken), "GET", null);
-		return JSONObject.parseObject(jsonStr);
-	}
-
-	/**
-	 * 生成jsApi的签名信息
-	 *
-	 * @param jsapiTicket
-	 * @param url
-	 * @return
-	 */
-	/*
-	 * public static Map<String, String> jsApiSign(String jsapiTicket, String
-	 * url) { return JsApiSign.sign(jsapiTicket, url); }
-	 */
 	/**
 	 * 
 	 * @return
@@ -252,6 +104,35 @@ public abstract class AbstractWeChatService {
 		TextResponseMessage textMessage = createTextMessage(fromUserName,
 				toUserName);
 		return textMessage;
+	}
+
+	protected CustomResponseMessage createCustomMessage(
+			Map<String, String> requestMap) {
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+		CustomResponseMessage customResponseMessage = new CustomResponseMessage();
+		customResponseMessage.setToUserName(fromUserName);
+		customResponseMessage.setFromUserName(toUserName);
+		customResponseMessage.setCreateTime(new Date().getTime() / 1000);
+		customResponseMessage.setMsgType(MSG_TYPE.TRANSFER_CUSTOMER_SERVICE
+				.toString().toLowerCase());
+		return customResponseMessage;
+	}
+
+	protected KfAccoutCustomResponseMessage createKfAccountCustomMessage(
+			Map<String, String> requestMap, String kfAccount) {
+		String fromUserName = requestMap.get("FromUserName");
+		// 公众帐号
+		String toUserName = requestMap.get("ToUserName");
+		KfAccoutCustomResponseMessage customResponseMessage = new KfAccoutCustomResponseMessage();
+		customResponseMessage.setToUserName(fromUserName);
+		customResponseMessage.setFromUserName(toUserName);
+		customResponseMessage.setCreateTime(new Date().getTime() / 1000);
+		customResponseMessage.setMsgType(MSG_TYPE.TRANSFER_CUSTOMER_SERVICE
+				.toString().toLowerCase());
+		customResponseMessage.setTransInfo(new TransInfo(kfAccount));
+		return customResponseMessage;
 	}
 
 	/**
@@ -320,8 +201,7 @@ public abstract class AbstractWeChatService {
 		String appId = configUtil.getValue("AppId");
 		String oauthUrl = "http://linhzweixintest.sinaapp.com/oauthServlet";
 		System.out.println(URLConstants.OAUTH.OAUTH2_CODE_URL
-				.replace("REDIRECT_URI",  oauthUrl)
-				.replace("APPID", appId).replace("SCOPE", "snsapi_userinfo")
-				.toString());
+				.replace("REDIRECT_URI", oauthUrl).replace("APPID", appId)
+				.replace("SCOPE", "snsapi_userinfo").toString());
 	}
 }

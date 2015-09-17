@@ -37,7 +37,11 @@ public interface IEventMessageService {
 	public abstract String handleLocationSelectEvent(
 			Map<String, String> requestMap);
 
+	// 模板消息发送成功后的推送事件
 	public abstract String handleTemplateSendJobFinishEvent(
 			Map<String, String> requestMap);
 
+	// 群发消息发送成功后的推送事件
+	public abstract String handleMassSendJobFinishEvent(
+			Map<String, String> requestMap);
 }
