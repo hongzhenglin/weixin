@@ -20,4 +20,6 @@ public interface IWeChatService {
 
 	public abstract List<String> getServerIP(String accessToken);
 
+	public abstract String getShortUrl(String accessToken, String longUrl);
+
 }

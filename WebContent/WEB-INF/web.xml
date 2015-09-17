@@ -37,6 +37,23 @@
 		<url-pattern>/oauthServlet</url-pattern>
 	</servlet-mapping>
 
+	<filter>
+		<filter-name>browerFilter</filter-name>
+		<filter-class>com.linhongzheng.weixin.filter.BrowerFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>browerFilter</filter-name>
+		<url-pattern>*.html</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>browerFilter</filter-name>
+		<url-pattern>*.jpg</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>browerFilter</filter-name>
+		<url-pattern>*.png</url-pattern>
+	</filter-mapping>
 
 	<!-- Disables Servlet Container welcome file handling. Needed for compatibility 
 		with Servlet 3.0 and Tomcat 7.0 -->

@@ -8,6 +8,8 @@ public class URLConstants {
 	// 获取微信服务器IP地址列表，请求方式: GET
 	public static final String GET_WEIXINIP_URL = "https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=ACCESS_TOKEN";
 
+	public static final String GET_SHORT_URL = "https://api.weixin.qq.com/cgi-bin/shorturl?access_token=ACCESS_TOKEN";
+
 	public static class QRCODE {
 		// 创建临时二维码ticket
 		public static final String TEMPORARAY_QRCODE_URL = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=ACCESS_TOKEN";

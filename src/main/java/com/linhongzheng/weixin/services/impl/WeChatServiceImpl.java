@@ -74,7 +74,6 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 	@Override
 	public List<String> getServerIP(String accessToken) {
 
-		
 		List<String> ipList = new ArrayList<String>();
 		try {
 			if (accessToken == null) {
@@ -96,6 +95,33 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 
 		}
 		return ipList;
+	}
+
+	@Override
+	public String getShortUrl(String accessToken, String longUrl) {
+		String shortUrl = null;
+		try {
+			if (accessToken == null) {
+				accessToken = accessTokenService.getAccessToken();
+			}
+			String requestUrl = URLConstants.GET_SHORT_URL.replace(
+					"ACCESS_TOKEN", accessToken);
+			String postData = "{\"action\":\"long2short\",\"long_url\":\"%s\"}";
+			String jsonStr = CommonUtil.httpsRequest(requestUrl, "POST",
+					String.format(postData, longUrl));
+			JSONObject jsonObject = JSON.parseObject(jsonStr);
+			int errcode = jsonObject.getIntValue("errcode");
+
+			if (errcode != 0) {
+				log.error("长链接转短链接地址失败：" + jsonObject.getString("errmsg"));
+			} else {
+				shortUrl = jsonObject.getString("short_url");
+			}
+		} catch (Exception e) {
+
+		}
+		return shortUrl;
+
 	}
 
 	private Map<String, String> parseRawXml(HttpServletRequest request)

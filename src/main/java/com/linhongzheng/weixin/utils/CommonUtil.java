@@ -15,6 +15,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,20 @@ public class CommonUtil {
 	private static Logger log = LoggerFactory.getLogger(CommonUtil.class);
 	private static final DateFormat format = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");
+
+	/**
+	 * 判断是否是微信浏览器
+	 * @param request
+	 * @return
+	 */
+	public static boolean isMicroMessenger(HttpServletRequest request) {
+		boolean result = false;
+		String userAgent = request.getHeader("User-Agent");
+		if (userAgent.contains("MicroMessenger")) {
+			result = true;
+		}
+		return result;
+	}
 
 	/**
 	 * 将微信消息中的CreateTime转换成标准格式的时间（yyyy-MM-dd HH:mm:ss）

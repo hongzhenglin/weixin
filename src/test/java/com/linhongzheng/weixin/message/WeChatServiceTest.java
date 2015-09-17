@@ -23,7 +23,7 @@ public class WeChatServiceTest extends AbstractJUnit4SpringContextTests {
 	@Resource
 	IWeChatService weChatService;
 
-	//@Test
+	// @Test
 	public void processRequest() {
 		Map<String, String> requestMap = new HashMap<String, String>();
 		requestMap.put("FromUserName", "philiphongzheng");
@@ -34,6 +34,13 @@ public class WeChatServiceTest extends AbstractJUnit4SpringContextTests {
 
 	@Test
 	public void testQueryServerIp() {
-		System.out.println("微信服务器IP:"+weChatService.getServerIP(null).toString());
+		System.out.println("微信服务器IP:"
+				+ weChatService.getServerIP(null).toString());
+	}
+
+	@Test
+	public void testLongToShortUrl() {
+		String longUrl = "http://mp.weixin.qq.com/wiki/10/165c9b15eddcfbd8699ac12b0bd89ae6.html";
+		System.out.println(weChatService.getShortUrl(null, longUrl));// http://w.url.cn/s/A4PttWt
 	}
 }
