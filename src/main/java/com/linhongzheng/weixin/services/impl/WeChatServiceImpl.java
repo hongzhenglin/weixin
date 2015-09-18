@@ -24,7 +24,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.entity.message.MSG_TYPE;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
-import com.linhongzheng.weixin.services.IAccessTokenService;
+import com.linhongzheng.weixin.services.ITokenService;
 import com.linhongzheng.weixin.services.IMessageService;
 import com.linhongzheng.weixin.services.IWeChatService;
 import com.linhongzheng.weixin.utils.CommonUtil;
@@ -44,7 +44,7 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 	private static final Logger log = LoggerFactory
 			.getLogger(WeChatServiceImpl.class);
 	@Autowired
-	IAccessTokenService accessTokenService;
+	ITokenService tokenService;
 
 	@Autowired
 	IMessageService messageService;
@@ -77,7 +77,7 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 		List<String> ipList = new ArrayList<String>();
 		try {
 			if (accessToken == null) {
-				accessToken = accessTokenService.getAccessToken();
+				accessToken = tokenService.getAccessToken();
 			}
 			String requestUrl = URLConstants.GET_WEIXINIP_URL.replace(
 					"ACCESS_TOKEN", accessToken);
@@ -102,7 +102,7 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 		String shortUrl = null;
 		try {
 			if (accessToken == null) {
-				accessToken = accessTokenService.getAccessToken();
+				accessToken = tokenService.getAccessToken();
 			}
 			String requestUrl = URLConstants.GET_SHORT_URL.replace(
 					"ACCESS_TOKEN", accessToken);
@@ -260,12 +260,12 @@ public class WeChatServiceImpl extends AbstractWeChatService implements
 		this.messageService = messageService;
 	}
 
-	public IAccessTokenService getAccessTokenService() {
-		return accessTokenService;
+	public ITokenService getTokenService() {
+		return tokenService;
 	}
 
-	public void setAccessTokenService(IAccessTokenService accessTokenService) {
-		this.accessTokenService = accessTokenService;
+	public void setTokenService(ITokenService tokenService) {
+		this.tokenService = tokenService;
 	}
 
 }

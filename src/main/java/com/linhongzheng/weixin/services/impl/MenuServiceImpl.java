@@ -13,7 +13,7 @@ import com.linhongzheng.weixin.entity.menu.ComplexButton;
 import com.linhongzheng.weixin.entity.menu.Menu;
 import com.linhongzheng.weixin.entity.menu.ViewButton;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
-import com.linhongzheng.weixin.services.IAccessTokenService;
+import com.linhongzheng.weixin.services.ITokenService;
 import com.linhongzheng.weixin.services.IMenuService;
 import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.JSONUtil;
@@ -28,7 +28,7 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 	private static Logger log = LoggerFactory.getLogger(MenuServiceImpl.class);
 
 	@Autowired
-	IAccessTokenService accessTokenService;
+	ITokenService tokenService;
 
 	/*
 	 * (non-Javadoc)
@@ -39,7 +39,7 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 	public void creatMenu() {
 
 		try {
-			String at = accessTokenService.getAccessToken();
+			String at = tokenService.getAccessToken();
 			if (null != at) {
 				String requestUrl = URLConstants.MENU.MENU_CREATE_URL.replace(
 						"ACCESS_TOKEN", at);
@@ -68,7 +68,7 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 	@Override
 	public void creatMenu(String jsonMenu) {
 		try {
-			String at = accessTokenService.getAccessToken();
+			String at = tokenService.getAccessToken();
 			if (null != at) {
 				String requestUrl = URLConstants.MENU.MENU_CREATE_URL.replace(
 						"ACCESS_TOKEN", at);
@@ -98,7 +98,7 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 
 		String jsonStr = null;
 		try {
-			String at = accessTokenService.getAccessToken();
+			String at = tokenService.getAccessToken();
 			if (null != at) {
 				String requestUrl = URLConstants.MENU.MENU_GET_URL.replace(
 						"ACCESS_TOKEN", at);
@@ -123,7 +123,7 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 	public String deleteMenu() {
 		String jsonStr = null;
 		try {
-			String at = accessTokenService.getAccessToken();
+			String at = tokenService.getAccessToken();
 			if (null != at) {
 				String requestUrl = URLConstants.MENU.MENU_DELETE_URL.replace(
 						"ACCESS_TOKEN", at);
@@ -219,12 +219,12 @@ public class MenuServiceImpl extends AbstractWeChatService implements
 		return menu;
 	}
 
-	public IAccessTokenService getAccessTokenService() {
-		return accessTokenService;
+	public ITokenService getTokenService() {
+		return tokenService;
 	}
 
-	public void setAccessTokenService(IAccessTokenService accessTokenService) {
-		this.accessTokenService = accessTokenService;
+	public void setTokenService(ITokenService tokenService) {
+		this.tokenService = tokenService;
 	}
 
 }

@@ -16,7 +16,7 @@ import com.linhongzheng.weixin.entity.user.WeiXinUserInfo;
 import com.linhongzheng.weixin.entity.user.WeiXinUserInfoList;
 import com.linhongzheng.weixin.entity.user.WeiXinUserList;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
-import com.linhongzheng.weixin.services.IAccessTokenService;
+import com.linhongzheng.weixin.services.ITokenService;
 import com.linhongzheng.weixin.services.IUserService;
 import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.JSONUtil;
@@ -28,7 +28,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 	private static Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Autowired
-	IAccessTokenService accessTokenService;
+	ITokenService tokenService;
 
 	@Override
 	public void saveWeiXinUser(String openId) {
@@ -116,7 +116,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 		String jsonData = createGroupRequest(groupName);
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -149,7 +149,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 	public List<WeiXinGroup> getGroups() {
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -185,7 +185,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 		int groupId = 0;
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -224,7 +224,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 		boolean result = false;
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -263,7 +263,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 		boolean result = false;
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -300,7 +300,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 		boolean result = false;
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -346,7 +346,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 		boolean result = false;
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -385,7 +385,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 		boolean result = false;
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -420,7 +420,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 	public WeiXinUserInfo getUserInfo(String openId) {
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -459,7 +459,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 		String at = null;
 		WeiXinUserInfoList list = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -494,7 +494,7 @@ public class UserServiceImpl extends AbstractWeChatService implements
 	public WeiXinUserList getUserList(String nextOpenId) {
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -574,11 +574,11 @@ public class UserServiceImpl extends AbstractWeChatService implements
 		return userInfo;
 	}
 
-	public IAccessTokenService getAccessTokenService() {
-		return accessTokenService;
+	public ITokenService getTokenService() {
+		return tokenService;
 	}
 
-	public void setAccessTokenService(IAccessTokenService accessTokenService) {
-		this.accessTokenService = accessTokenService;
+	public void setTokenService(ITokenService tokenService) {
+		this.tokenService = tokenService;
 	}
 }

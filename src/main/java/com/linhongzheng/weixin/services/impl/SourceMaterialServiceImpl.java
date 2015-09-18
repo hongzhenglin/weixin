@@ -26,7 +26,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.entity.material.WeiXinMedia;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
-import com.linhongzheng.weixin.services.IAccessTokenService;
+import com.linhongzheng.weixin.services.ITokenService;
 import com.linhongzheng.weixin.services.ISourceMaterialService;
 import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
@@ -40,7 +40,7 @@ public class SourceMaterialServiceImpl extends AbstractWeChatService implements
 	private static final String END = "\r\n";
 	private static final String TWOHyphens = "--";
 	@Autowired
-	IAccessTokenService accessTokenService;
+	ITokenService tokenService;
 
 	/**
 	 * 图片大小不超过2M，支持bmp/png/jpeg/jpg/gif格式，语音大小不超过5M，长度不超过60秒，支持mp3/wma/wav/amr格式
@@ -49,7 +49,7 @@ public class SourceMaterialServiceImpl extends AbstractWeChatService implements
 	public WeiXinMedia uploadMedia(String type, String mediaFileUrl) {
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -74,7 +74,7 @@ public class SourceMaterialServiceImpl extends AbstractWeChatService implements
 		String at = null;
 		HttpURLConnection downloadConn = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 
 			if (!savePath.endsWith("/")) {
 				savePath += "/";
@@ -335,12 +335,12 @@ public class SourceMaterialServiceImpl extends AbstractWeChatService implements
 		return fileLength;
 	}
 
-	public IAccessTokenService getAccessTokenService() {
-		return accessTokenService;
+	public ITokenService getTokenService() {
+		return tokenService;
 	}
 
-	public void setAccessTokenService(IAccessTokenService accessTokenService) {
-		this.accessTokenService = accessTokenService;
+	public void setTokenService(ITokenService tokenService) {
+		this.tokenService = tokenService;
 	}
 
 }

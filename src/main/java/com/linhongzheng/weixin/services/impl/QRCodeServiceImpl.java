@@ -16,7 +16,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.entity.WeiXinQRCode;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
-import com.linhongzheng.weixin.services.IAccessTokenService;
+import com.linhongzheng.weixin.services.ITokenService;
 import com.linhongzheng.weixin.services.IQRCodeService;
 import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
@@ -28,7 +28,7 @@ public class QRCodeServiceImpl extends AbstractWeChatService implements
 			.getLogger(QRCodeServiceImpl.class);
 
 	@Autowired
-	IAccessTokenService accessTokenService;
+	ITokenService tokenService;
 
 	/**
 	 * 创建临时带参数二维码
@@ -42,7 +42,7 @@ public class QRCodeServiceImpl extends AbstractWeChatService implements
 	public WeiXinQRCode createTemporaryQRCode(int expireSeconds, int sceneId) {
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -81,7 +81,7 @@ public class QRCodeServiceImpl extends AbstractWeChatService implements
 	public WeiXinQRCode createPermanentQRCode(int sceneId) {
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -149,12 +149,12 @@ public class QRCodeServiceImpl extends AbstractWeChatService implements
 		return filePath;
 	}
 
-	public IAccessTokenService getAccessTokenService() {
-		return accessTokenService;
+	public ITokenService getTokenService() {
+		return tokenService;
 	}
 
-	public void setAccessTokenService(IAccessTokenService accessTokenService) {
-		this.accessTokenService = accessTokenService;
+	public void setTokenService(ITokenService tokenService) {
+		this.tokenService = tokenService;
 	}
 
 }

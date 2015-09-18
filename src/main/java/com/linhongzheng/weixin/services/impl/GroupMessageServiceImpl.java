@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.linhongzheng.weixin.entity.group.GroupArticle;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
-import com.linhongzheng.weixin.services.IAccessTokenService;
+import com.linhongzheng.weixin.services.ITokenService;
 import com.linhongzheng.weixin.services.IGroupMessageService;
 import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
@@ -17,14 +17,14 @@ public class GroupMessageServiceImpl extends AbstractWeChatService implements
 		IGroupMessageService {
 
 	@Autowired
-	IAccessTokenService accessTokenService;
+	ITokenService tokenService;
 
 	@Override
 	public void sendMessageByGroupid(String jsonData) {
 
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 
 			String requestUrl = URLConstants.GROUP.GROUP_MESSAGE_SEND_URL
 					.replace("ACCESS_TOKEN", at);
@@ -40,7 +40,7 @@ public class GroupMessageServiceImpl extends AbstractWeChatService implements
 	public void sendMessageByOpenids(String jsonData) {
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 			String requestUrl = URLConstants.GROUP.OPENID_MESSAGE_SEND_URL
 					.replace("ACCESS_TOKEN", at);
 			System.out.println("按openId群发返回结果："
@@ -56,7 +56,7 @@ public class GroupMessageServiceImpl extends AbstractWeChatService implements
 
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 			String requestUrl = URLConstants.GROUP.DELETE_MESSAGE_URL.replace(
 					"ACCESS_TOKEN", at);
 			String jsonData = String.format("{\"msg_id\": \"%s\"}", msgId);
@@ -73,7 +73,7 @@ public class GroupMessageServiceImpl extends AbstractWeChatService implements
 		String at = null;
 		String resp = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 			String requestUrl = URLConstants.GROUP.MESSAGE_STATUS_URL.replace(
 					"ACCESS_TOKEN", at);
 			String jsonData = String.format("{\"msg_id\": \"%s\"}", msgId);
@@ -85,12 +85,12 @@ public class GroupMessageServiceImpl extends AbstractWeChatService implements
 		return resp;
 	}
 
-	public IAccessTokenService getAccessTokenService() {
-		return accessTokenService;
+	public ITokenService getTokenService() {
+		return tokenService;
 	}
 
-	public void setAccessTokenService(IAccessTokenService accessTokenService) {
-		this.accessTokenService = accessTokenService;
+	public void setTokenService(ITokenService tokenService) {
+		this.tokenService = tokenService;
 	}
 
 	@Override

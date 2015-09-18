@@ -24,7 +24,7 @@ import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
 import com.linhongzheng.weixin.entity.message.response.TextResponseMessage;
 import com.linhongzheng.weixin.entity.user.WeiXinGroup;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
-import com.linhongzheng.weixin.services.IAccessTokenService;
+import com.linhongzheng.weixin.services.ITokenService;
 import com.linhongzheng.weixin.services.IBaiduService;
 import com.linhongzheng.weixin.services.IEventMessageService;
 import com.linhongzheng.weixin.services.IMessageService;
@@ -59,7 +59,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 	ITodayInHistoryService todayInHistoryService;
 
 	@Autowired
-	IAccessTokenService accessTokenService;
+	ITokenService tokenService;
 
 	/**
 	 * @param requestMap
@@ -430,7 +430,7 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 	public void sendTemplateMEssage(String data) {
 		String at = null;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -483,12 +483,12 @@ public class MessageServiceImpl extends AbstractWeChatService implements
 		this.baiduService = baiduService;
 	}
 
-	public IAccessTokenService getAccessTokenService() {
-		return accessTokenService;
+	public ITokenService getTokenService() {
+		return tokenService;
 	}
 
-	public void setAccessTokenService(IAccessTokenService accessTokenService) {
-		this.accessTokenService = accessTokenService;
+	public void setTokenService(ITokenService tokenService) {
+		this.tokenService = tokenService;
 	}
 
 	public static void main(String[] args) {

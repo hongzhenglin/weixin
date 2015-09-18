@@ -1,7 +1,7 @@
 package com.linhongzheng.weixin.message;
 
-import com.linhongzheng.weixin.services.IAccessTokenService;
-import com.linhongzheng.weixin.services.impl.AccessTokenServiceImpl;
+import com.linhongzheng.weixin.services.ITokenService;
+import com.linhongzheng.weixin.services.impl.TokenServiceImpl;
 
 import junit.framework.TestCase;
 
@@ -14,7 +14,7 @@ public class AccessTokenTest extends TestCase{
 
     @Test
     public void testGetAccessToken(){
-        IAccessTokenService accessTokenService = new AccessTokenServiceImpl();
+        ITokenService accessTokenService = new TokenServiceImpl();
         try {
             System.out.println(accessTokenService.getAccessToken("wx890eefa456e4c786", "b0aad21044c6b2b302f9722ab6145eab"));
         } catch (Exception e) {

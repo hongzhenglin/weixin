@@ -3,7 +3,7 @@ package com.linhongzheng.weixin.thread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.linhongzheng.weixin.services.impl.AccessTokenServiceImpl;
+import com.linhongzheng.weixin.services.impl.TokenServiceImpl;
 
 /**
  * Created by Administrator on 2015/8/18.

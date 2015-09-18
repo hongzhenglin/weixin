@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.linhongzheng.weixin.services.AbstractWeChatService;
-import com.linhongzheng.weixin.services.IAccessTokenService;
+import com.linhongzheng.weixin.services.ITokenService;
 import com.linhongzheng.weixin.services.ICustomMessageService;
 import com.linhongzheng.weixin.utils.CommonUtil;
 import com.linhongzheng.weixin.utils.URLConstants;
@@ -19,7 +19,7 @@ public class CustomMessageServiceImpl extends AbstractWeChatService implements
 	private static final Logger log = LoggerFactory
 			.getLogger(CustomMessageServiceImpl.class);
 	@Autowired
-	IAccessTokenService accessTokenService;
+	ITokenService tokenService;
 
 	@Override
 	public void addCustomer() {
@@ -56,7 +56,7 @@ public class CustomMessageServiceImpl extends AbstractWeChatService implements
 		String at = null;
 		boolean result = false;
 		try {
-			at = accessTokenService.getAccessToken();
+			at = tokenService.getAccessToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -83,12 +83,14 @@ public class CustomMessageServiceImpl extends AbstractWeChatService implements
 		return result;
 	}
 
-	public IAccessTokenService getAccessTokenService() {
-		return accessTokenService;
+	public ITokenService getTokenService() {
+		return tokenService;
 	}
 
-	public void setAccessTokenService(IAccessTokenService accessTokenService) {
-		this.accessTokenService = accessTokenService;
+	public void setTokenService(ITokenService tokenService) {
+		this.tokenService = tokenService;
 	}
+
+	 
 
 }

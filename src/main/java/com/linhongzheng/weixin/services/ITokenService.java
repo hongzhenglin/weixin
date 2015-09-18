@@ -2,7 +2,7 @@ package com.linhongzheng.weixin.services;
 
 
  
-public interface IAccessTokenService {
+public interface ITokenService {
 
 	/**
 	 * 获取access_token
