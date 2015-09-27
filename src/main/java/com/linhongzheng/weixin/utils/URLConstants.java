@@ -1,10 +1,10 @@
 package com.linhongzheng.weixin.utils;
 
-public class URLConstants {
+public final class URLConstants {
 
 	// 获取token接口(GET)
 	public static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
-	
+
 	// GET方式请求获得jsapi_ticket
 	public static final String JSAPI_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=ACCESS_TOKEN";
 
@@ -105,14 +105,20 @@ public class URLConstants {
 
 	public static class BAIDU {
 		// 百度翻译地址
-		public static final String BAIDU_TRANSLATE_URL = "http://openapi.baidu.com/public/2.0/bmt/translate?client_id={AK}&q={keyWord}&from=auto&to=auto";
+		public static final String BAIDU_TRANSLATE_URL = "http://openapi.baidu.com/public/2.0/bmt/translate?client_id=AK&q=keyWord&from=auto&to=auto";
 
 		// 百度音乐搜索地址
-		public static final String BAIDU_MUSIC_URL = "http://box.zhangmen.baidu.com/x?op=12&count=1&title={TITLE}$${AUTHOR}";
+		public static final String BAIDU_MUSIC_URL = "http://box.zhangmen.baidu.com/x?op=12&count=1&title=TITLE$$AUTHOR";
 
 		// 百度天气预报
-		public static final String BAIDU_WEATHER_URL = "http://api.map.baidu.com/telematics/v3/weather?location={LOCATION}&output=json&ak={AK}";
+		public static final String BAIDU_WEATHER_URL = "http://api.map.baidu.com/telematics/v3/weather?location=LOCATION&output=json&ak=AK";
 
+		//区域检索
+		public static final String PLACE_SEARCH_URL="http://api.map.baidu.com/place/v2/search?query=QUERY&location=LNG,LAT&radius=2000&output=xml&ak=AK";
+		
+		// 百度地图坐标转换
+		public static final String BAIDU_GEO_CONVERT_URL = "http://api.map.baidu.com/geoconv/v1/?coords=COORDS&from=1&to=5&&ak=AK";
+		
 	}
 
 	public static class TEMPLATE {

@@ -1,5 +1,11 @@
 package com.linhongzheng.weixin.services;
 
+import java.util.List;
+
+import org.springframework.util.CollectionUtils;
+
+import com.linhongzheng.weixin.dao.BaseDAO;
+import com.linhongzheng.weixin.entity.baidu.UserLocation;
 import com.linhongzheng.weixin.entity.message.response.Music;
 import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
 
@@ -24,5 +30,9 @@ public interface IBaiduService {
 	public abstract String getMusicUsage();
 
 	public abstract String getTranslateUsage();
+
+	public abstract UserLocation getLastLocation(String openId);
+
+	public abstract void saveUserLocation(UserLocation userLocation);
 
 }

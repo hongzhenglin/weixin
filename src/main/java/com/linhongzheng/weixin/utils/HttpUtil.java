@@ -37,10 +37,7 @@ public class HttpUtil {
 	 * @throws KeyManagementException
 	 * @description 功能描述: get 请求
 	 */
-	public static String get(String url) throws KeyManagementException,
-			NoSuchAlgorithmException, NoSuchProviderException,
-			UnsupportedEncodingException, IOException, ExecutionException,
-			InterruptedException {
+	public static String get(String url) throws Exception {
 		return get(url, null);
 	}
 
@@ -54,9 +51,7 @@ public class HttpUtil {
 	 * @description 功能描述: get 请求
 	 */
 	public static String get(String url, Map<String, String> params)
-			throws KeyManagementException, NoSuchAlgorithmException,
-			NoSuchProviderException, UnsupportedEncodingException, IOException,
-			ExecutionException, InterruptedException {
+			throws Exception {
 		return get(url, params, null);
 	}
 
@@ -70,8 +65,7 @@ public class HttpUtil {
 	 * @description 功能描述: get 请求
 	 */
 	public static String get(String url, Map<String, String> params,
-			Map<String, String> headers) throws IOException,
-			ExecutionException, InterruptedException {
+			Map<String, String> headers) throws Exception {
 		AsyncHttpClient http = new AsyncHttpClient();
 		AsyncHttpClient.BoundRequestBuilder builder = http.prepareGet(url);
 		builder.setBodyEncoding(DEFAULT_CHARSET);
@@ -117,7 +111,7 @@ public class HttpUtil {
 	 * @description 功能描述: POST 请求
 	 */
 	public static String post(String url, Map<String, String> params)
-			throws IOException, ExecutionException, InterruptedException {
+			throws Exception {
 		AsyncHttpClient http = new AsyncHttpClient();
 		AsyncHttpClient.BoundRequestBuilder builder = http.preparePost(url);
 		builder.setBodyEncoding(DEFAULT_CHARSET);

@@ -9,10 +9,13 @@ import org.dom4j.Element;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.linhongzheng.weixin.dao.BaseDAO;
 import com.linhongzheng.weixin.demo.weather.entity.WeatherData;
 import com.linhongzheng.weixin.demo.weather.entity.WeatherResp;
 import com.linhongzheng.weixin.demo.weather.entity.WeatherResult;
+import com.linhongzheng.weixin.entity.baidu.BaiduPlace;
 import com.linhongzheng.weixin.entity.baidu.TranslateResult;
+import com.linhongzheng.weixin.entity.baidu.UserLocation;
 import com.linhongzheng.weixin.entity.message.response.Article;
 import com.linhongzheng.weixin.entity.message.response.Music;
 import com.linhongzheng.weixin.entity.message.response.NewsResponseMessage;
@@ -42,9 +45,9 @@ public class BaiduServiceImpl extends AbstractWeChatService implements
 		// 组装查询地址
 		String requestUrl = URLConstants.BAIDU.BAIDU_TRANSLATE_URL;
 		ConfigUtil config = new ConfigUtil("baidu.properties");
-		requestUrl = requestUrl.replace("{AK}", config.getValue("AK"));
+		requestUrl = requestUrl.replace("AK", config.getValue("AK"));
 		// 对参数q的值进行urlEncode utf-8编码
-		requestUrl = requestUrl.replace("{keyWord}",
+		requestUrl = requestUrl.replace("keyWord",
 				CommonUtil.urlEncodeUTF8(source));
 
 		// 查询并解析结果
@@ -159,9 +162,9 @@ public class BaiduServiceImpl extends AbstractWeChatService implements
 	public Music searchMusic(String musicTitle, String musicAuthor) {
 		String requestUrl = URLConstants.BAIDU.BAIDU_MUSIC_URL;
 		// 对音乐名称、作者进URL编码
-		requestUrl = requestUrl.replace("{TITLE}",
+		requestUrl = requestUrl.replace("TITLE",
 				CommonUtil.urlEncodeUTF8(musicTitle));
-		requestUrl = requestUrl.replace("{AUTHOR}",
+		requestUrl = requestUrl.replace("AUTHOR",
 				CommonUtil.urlEncodeUTF8(musicAuthor));
 		// 处理名称、作者中间的空格
 		requestUrl = requestUrl.replaceAll("\\+", "%20");
@@ -226,9 +229,9 @@ public class BaiduServiceImpl extends AbstractWeChatService implements
 
 	private WeatherResp queryWeatherResp(String cityName) {
 		String requestUrl = URLConstants.BAIDU.BAIDU_WEATHER_URL.replace(
-				"{LOCATION}", CommonUtil.urlEncodeUTF8(cityName));
+				"LOCATION", CommonUtil.urlEncodeUTF8(cityName));
 		ConfigUtil config = new ConfigUtil("baidu.properties");
-		requestUrl = requestUrl.replace("{AK}", config.getValue("AK"));
+		requestUrl = requestUrl.replace("AK", config.getValue("AK"));
 
 		WeatherResp weatherResp = null;
 		try {
@@ -318,5 +321,41 @@ public class BaiduServiceImpl extends AbstractWeChatService implements
 		}
 		return music;
 	}
+
+	@Override
+	public void saveUserLocation(UserLocation userLocation) {
+		String insertSql = "INSERT INTO user_location(open_id,lng,lat,bd09_lng,bd09_lat)"
+				+ " values(?, ?,?,?, ?)";
+		new BaseDAO<UserLocation>().update(insertSql, userLocation.getOpenId(),
+				userLocation.getLng(), userLocation.getLat(),
+				userLocation.getBd09Lng(), userLocation.getBd09Lat());
+	}
+
+	@Override
+	public UserLocation getLastLocation(String openId) {
+		UserLocation userLocation = null;
+		String sql = "select  open_id,lng,lat,bd09_lng,bd09_lat from user_location "
+				+ " where open_id =? order by id desc limit 0,1 ";
+		List<UserLocation> userLocations = new BaseDAO<UserLocation>().query(
+				sql, openId);
+		if (!CollectionUtils.isEmpty(userLocations)) {
+			userLocation = userLocations.get(0);
+		}
+		return userLocation;
+	}
+
+	public List<BaiduPlace> searchPlace(String query, String lng, String lat)
+			throws Exception {
+		String url = URLConstants.BAIDU.PLACE_SEARCH_URL
+				.replace("QUERY", query).replace("LNG", lng)
+				.replace("LAT", lat);
+		ConfigUtil config = new ConfigUtil("baidu.properties");
+		url = url.replace("AK", config.getValue("AK"));
+		String respXml = HttpUtil.get(url);
+		List<BaiduPlace> placeList = parsePlaceXml(respXml);
+		return placeList;
+	}
+
+	private List<BaiduPlace> parsePlaceXml(String respXml);
 
 }

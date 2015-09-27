@@ -25,3 +25,13 @@ create table weixin_sign(
    sign_time datetime, #签到时间
    sign_points int(11)  # 签到积分
 ) engine = MyISAM DEFAULT CHARSET=utf8
+
+#用户地理位置表
+create table user_location(
+	id int not null auto_increment primary key,
+	open_id varchar(50) not null, #用户的Open id
+	lng varchar(30) not null, #用户发送的经度
+	lat varchar(30) not null, #用户发送的纬度
+	bd09_lng varchar(30), # 经过百度坐标转换后的经度
+	bd09_lat varchar(30)  #经过百度坐标转换后的纬度
+)
